@@ -24,4 +24,6 @@ DEBUGGING:
  - run: 'ffplay -f flv **_your_rtmp_url_**' to verify if stream is being sent via RTMP Server. 
  - run: 'sudo nano /opt/homebrew/etc/nginx/nginx.conf' to edit nginx.conf file.
    - nginx.conf file controls the functionality of the NGINX Server. There should be a block for the RTMP Server, which will specify the location of the Listening Port (typically 1935).
- - 
+
+EXECUTION:
+- open: Local RTMP Server application. This will facilitate the connection from the drone.

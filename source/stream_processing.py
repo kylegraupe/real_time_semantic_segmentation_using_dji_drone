@@ -37,7 +37,7 @@ def livestream_1(url):
     # Start the FFmpeg process
     process = (
         ffmpeg
-        .input(url)
+        .input(url, **{'an': None}) # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
