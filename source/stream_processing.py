@@ -1,3 +1,6 @@
+import time
+import threading
+from queue import Queue
 import ffmpeg
 import numpy as np
 import cv2
@@ -6,6 +9,7 @@ import stream_diagnostics
 from PIL import Image
 
 model = model_inference.model_unet
+model_on = False
 
 
 def get_frame_size(url):
@@ -23,85 +27,6 @@ def get_frame_size(url):
     width = video_stream['width']
     height = video_stream['height']
     return width, height
-
-
-# def livestream_1(url):
-#     """
-#     Establishes a livestream connection to the provided URL, reads video frames,
-#     and displays them in a named window until the 'q' key is pressed.
-#
-#     Args:
-#         url (str): The URL of the livestream to connect to.
-#
-#     Returns:
-#         None
-#     """
-#
-#     # Set font properties
-#     font = cv2.FONT_HERSHEY_SIMPLEX
-#     fps_location = (10, 50)
-#     shape_location = (10, 75)
-#     fontScale = 1
-#     fontColor = (255, 255, 255)
-#     thickness = 1
-#     lineType = 2
-#
-#     # Get frame size
-#     width, height = get_frame_size(url)
-#
-#     # Set up FFmpeg process
-#     process = (
-#         ffmpeg
-#         .input(url, **{'an': None})  # Audio Disabled in second parameter.
-#         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
-#         .run_async(pipe_stdout=True, pipe_stderr=True)
-#     )
-#
-#
-#     # Create a named window
-#     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
-#
-#     while True:
-#         # Calculate frame size based on width and height
-#         frame_size = width * height * 3
-#         in_bytes = process.stdout.read(frame_size)
-#
-#         # If no data is read, continue to check for errors
-#         if len(in_bytes) != frame_size:
-#             if not in_bytes:
-#                 print("End of stream or error reading frame")
-#             else:
-#                 print("Error: Read incomplete frame")
-#             break
-#
-#         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3]).copy()
-#
-#         cv2.putText(in_frame, f'FPS: {0}',
-#                     fps_location,
-#                     font,
-#                     fontScale,
-#                     fontColor,
-#                     thickness,
-#                     lineType)
-#         cv2.putText(in_frame, f'Shape: {width}x{height}',
-#                     shape_location,
-#                     font,
-#                     fontScale,
-#                     fontColor,
-#                     thickness,
-#                     lineType)
-#
-#         # Display the frame
-#         cv2.imshow('RTMP Stream', in_frame)
-#
-#         # Exit if the 'q' key is pressed
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-#
-#     # Release the capture and close windows
-#     process.stdout.close()
-#     process.wait()
-#     cv2.destroyAllWindows()
 
 
 def livestream_2(url):
@@ -129,7 +54,9 @@ def livestream_2(url):
 
     # Get frame size
     width, height = get_frame_size(url)
+    frame_size = width * height * 3
 
+    print(f'Initiated FFmpeg process at time {time.ctime()}')
     # Set up FFmpeg process
     process = (
         ffmpeg
@@ -137,14 +64,15 @@ def livestream_2(url):
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
+    print(f'FFmpeg process connected at time {time.ctime()}')
 
 
     # Create a named window
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
 
     while True:
+        print(f'{time.time()}: Processing frame...')
         # Calculate frame size based on width and height
-        frame_size = width * height * 3
         in_bytes = process.stdout.read(frame_size)
 
         # If no data is read, continue to check for errors
@@ -156,15 +84,21 @@ def livestream_2(url):
             break
 
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3]).copy()
-        # Apply segmentation model to the frame
-        segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), model).astype(np.uint8)
-        segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
-        segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
-        in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
+        if model_on:
 
-        # Stack the original and segmented frames horizontally
-        output_frame = np.hstack((in_frame, segmented_frame_np_rgb))
+            # Apply segmentation model to the frame
+            segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), model).astype(np.uint8)
+            segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
+            segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
+
+            in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
+
+            # Stack the original and segmented frames horizontally
+            output_frame = np.hstack((in_frame, segmented_frame_np_rgb))
+
+        else:
+            output_frame = in_frame
 
         cv2.putText(output_frame, f'FPS: {0}',
                     fps_location,
@@ -192,3 +126,4 @@ def livestream_2(url):
     process.stdout.close()
     process.wait()
     cv2.destroyAllWindows()
+

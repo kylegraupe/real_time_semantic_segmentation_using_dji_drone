@@ -7,6 +7,7 @@ Video frames are passed to the model and the predicted RGB mask is returned.
 from PIL import Image
 from torchvision import transforms
 import torch
+import time
 
 MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V1.pt'
 
@@ -21,8 +22,11 @@ def load_segmentation_model(model_path):
     Returns:
         model (nn.Module): The loaded segmentation model.
     """
-    model = torch.load(model_path, map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+    model = torch.load(model_path, map_location=torch.device('mps' if torch.cuda.is_available() else 'cpu'))
+    print(f'Model loaded from {model_path} at time {time.ctime()}')
+
     model.eval()  # Set the model to evaluation mode
+    print(f'Model set to evaluation mode at time {time.ctime()}')
     return model
 
 
@@ -52,7 +56,7 @@ def image_to_tensor(img, trained_model):
     input_tensor = input_tensor.unsqueeze(0)  # Add a batch dimension
 
     # Move the input tensor to the device (GPU or CPU)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('mps' if torch.cuda.is_available() else 'cpu')
     input_tensor = input_tensor.to(device)
     trained_model = trained_model.to(device)
 
