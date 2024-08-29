@@ -27,3 +27,9 @@ DEBUGGING:
 
 EXECUTION:
 - open: Local RTMP Server application. This will facilitate the connection from the drone.
+- navigate to transmission tab on DJI RC2. select 'Live Streaming Platforms' and select 'RTMP'.
+  - currently working with high FPS and low latency on the following settings:
+    - Frequency: 2.4 GHz
+    - Channel Mode: Auto
+    - Resolution: 720p (only option)
+    - Bit Rate: 5 Mbps

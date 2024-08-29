@@ -2,6 +2,8 @@ import ffmpeg
 import numpy as np
 import cv2
 
+import stream_diagnostics
+
 
 def get_frame_size(url):
     """
@@ -31,16 +33,27 @@ def livestream_1(url):
     Returns:
         None
     """
+
+    # Set font properties
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    fps_location = (10, 50)
+    shape_location = (10, 75)
+    fontScale = 1
+    fontColor = (255, 255, 255)
+    thickness = 1
+    lineType = 2
+
     # Get frame size
     width, height = get_frame_size(url)
 
-    # Start the FFmpeg process
+    # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, **{'an': None}) # Audio Disabled in second parameter.
+        .input(url, **{'an': None})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
+
 
     # Create a named window
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
@@ -58,8 +71,22 @@ def livestream_1(url):
                 print("Error: Read incomplete frame")
             break
 
-        # Convert bytes to numpy array
-        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3])
+        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3]).copy()
+
+        cv2.putText(in_frame, f'FPS: {0}',
+                    fps_location,
+                    font,
+                    fontScale,
+                    fontColor,
+                    thickness,
+                    lineType)
+        cv2.putText(in_frame, f'Shape: {width}x{height}',
+                    shape_location,
+                    font,
+                    fontScale,
+                    fontColor,
+                    thickness,
+                    lineType)
 
         # Display the frame
         cv2.imshow('RTMP Stream', in_frame)
@@ -72,4 +99,3 @@ def livestream_1(url):
     process.stdout.close()
     process.wait()
     cv2.destroyAllWindows()
-
