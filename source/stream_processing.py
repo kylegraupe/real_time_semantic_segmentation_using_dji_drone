@@ -94,7 +94,7 @@ def livestream_2(url):
         ffmpeg
         .input(url, **{'an': None, 'r': f'{FPS}'})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
-        .global_args('-threads', '8')
+        .global_args('-threads', '4')
         .global_args('-c:v', 'h264_videotoolbox')  # Use VideoToolbox for encoding
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
