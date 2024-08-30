@@ -9,7 +9,7 @@ import stream_diagnostics
 from PIL import Image
 
 model = model_inference.model_unet
-model_on = False
+model_on = True
 
 
 def get_frame_size(url):
@@ -53,14 +53,14 @@ def livestream_2(url):
     lineType = 2
 
     # Get frame size
-    width, height = get_frame_size(url)
-    frame_size = width * height * 3
+    # width, height = get_frame_size(url)
+    frame_size = 1280 * 720 * 3
 
     print(f'Initiated FFmpeg process at time {time.ctime()}')
     # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, **{'an': None})  # Audio Disabled in second parameter.
+        .input(url, **{'an': None, 'r': '5'})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
@@ -71,7 +71,7 @@ def livestream_2(url):
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
 
     while True:
-        print(f'{time.time()}: Processing frame...')
+        # print(f'{time.time()}: Processing frame...')
         # Calculate frame size based on width and height
         in_bytes = process.stdout.read(frame_size)
 
@@ -83,7 +83,7 @@ def livestream_2(url):
                 print("Error: Read incomplete frame")
             break
 
-        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3]).copy()
+        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
 
         if model_on:
 
@@ -107,7 +107,7 @@ def livestream_2(url):
                     fontColor,
                     thickness,
                     lineType)
-        cv2.putText(output_frame, f'Shape: {width}x{height}',
+        cv2.putText(output_frame, f'Shape: {1280}x{720}',
                     shape_location,
                     font,
                     fontScale,
