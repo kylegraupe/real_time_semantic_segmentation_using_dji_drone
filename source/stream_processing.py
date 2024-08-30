@@ -8,24 +8,11 @@ import model_inference
 import stream_diagnostics
 from PIL import Image
 
+# Model properties
 MODEL = model_inference.model_unet
+MODEL_ENCODER = MODEL.encoder.__class__.__name__
+MODEL_DECODER = MODEL.decoder.__class__.__name__
 MODEL_ON = True
-FPS = 1
-
-FRAME_WIDTH = 1280
-FRAME_HEIGHT = 720
-FRAME_RESIZE_WIDTH = 704
-FRAME_RESIZE_HEIGHT = 720
-
-# Set font properties
-FONT = cv2.FONT_HERSHEY_SIMPLEX
-FPS_LOCATION = (10, 50)
-SHAPE_LOCATION = (10, 75)
-FONT_SCALE = 1
-FONT_COLOR = (255, 255, 255)
-THICKNESS = 1
-LINE_TYPE = 2
-
 COLOR_MAP = np.array([
     [0, 0, 0],        # Class 0: black
     [128, 0, 0],      # Class 1: dark red
@@ -51,6 +38,29 @@ COLOR_MAP = np.array([
     [128, 64, 128],   # Class 21: medium purple
     [0, 192, 128],    # Class 22: aquamarine
 ], dtype=np.uint8)
+NUM_CHANNELS = 3 # RGB
+
+# Stream properties
+FPS = 1
+NUM_THREADS = 4
+PIPE_STDOUT = True
+PIPE_STDERR = True
+
+# Frame properties
+FRAME_WIDTH = 1280
+FRAME_HEIGHT = 720
+RESIZE_FRAME_WIDTH = 1280
+RESIZE_FRAME_HEIGHT = 704
+
+# Set font properties
+FONT = cv2.FONT_HERSHEY_SIMPLEX
+FPS_LOCATION = (10, 50)
+SHAPE_LOCATION = (10, 75)
+MODEL_DESCRIPTION_LOCATION = (10, 100)
+FONT_SCALE = 1
+FONT_COLOR = (255, 255, 255)
+THICKNESS = 1
+LINE_TYPE = 2
 
 
 def get_frame_size(url):
@@ -86,7 +96,7 @@ def livestream_2(url):
 
     # Get frame size
     # width, height = get_frame_size(url)
-    frame_size = 1280 * 720 * 3
+    frame_size = FRAME_WIDTH * FRAME_HEIGHT * NUM_CHANNELS
 
     print(f'Initiated FFmpeg process at time {time.ctime()}')
     # Set up FFmpeg process
@@ -100,12 +110,10 @@ def livestream_2(url):
     )
     print(f'FFmpeg process connected at time {time.ctime()}')
 
-
     # Create a named window
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
 
     while True:
-        # print(f'{time.time()}: Processing frame...')
         # Calculate frame size based on width and height
         in_bytes = process.stdout.read(frame_size)
 
@@ -120,11 +128,9 @@ def livestream_2(url):
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
 
         if MODEL_ON:
-
             # Apply segmentation model to the frame
             segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), MODEL).astype(np.uint8)
             segmented_frame_img_rgb = COLOR_MAP[segmented_frame_np_gray]
-            # segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
             segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
@@ -135,20 +141,28 @@ def livestream_2(url):
         else:
             output_frame = in_frame
 
-        cv2.putText(output_frame, f'FPS: {0}',
+        cv2.putText(output_frame, f'FPS: {FPS}',
                     FPS_LOCATION,
                     FONT,
                     FONT_SCALE,
                     FONT_COLOR,
                     THICKNESS,
                     LINE_TYPE)
-        cv2.putText(output_frame, f'Shape: {1280}x{720}',
+        cv2.putText(output_frame, f'Shape: {RESIZE_FRAME_WIDTH}x{RESIZE_FRAME_HEIGHT}',
                     SHAPE_LOCATION,
                     FONT,
                     FONT_SCALE,
                     FONT_COLOR,
                     THICKNESS,
                     LINE_TYPE)
+        cv2.putText(output_frame, f'Encoder/Decoder: {MODEL_ENCODER}/{MODEL_DECODER}',
+                    MODEL_DESCRIPTION_LOCATION,
+                    FONT,
+                    FONT_SCALE,
+                    FONT_COLOR,
+                    THICKNESS,
+                    LINE_TYPE)
+
 
         # Display the frame
         cv2.imshow('RTMP Stream', output_frame)
