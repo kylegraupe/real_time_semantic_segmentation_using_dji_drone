@@ -60,8 +60,10 @@ def livestream_2(url):
     # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, **{'an': None, 'r': '5'})  # Audio Disabled in second parameter.
+        .input(url, **{'an': None, 'r': '1'})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
+        .global_args('-threads', '8')
+        .global_args('-c:v', 'h264_videotoolbox')  # Use VideoToolbox for encoding
         .run_async(pipe_stdout=True, pipe_stderr=True)
     )
     print(f'FFmpeg process connected at time {time.ctime()}')
