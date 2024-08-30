@@ -11,6 +11,32 @@ from PIL import Image
 model = model_inference.model_unet
 model_on = True
 
+color_map = np.array([
+    [0, 0, 0],        # Class 0: black
+    [128, 0, 0],      # Class 1: dark red
+    [0, 128, 0],      # Class 2: dark green
+    [128, 128, 0],    # Class 3: dark yellow
+    [0, 0, 128],      # Class 4: dark blue
+    [128, 0, 128],    # Class 5: dark purple
+    [0, 128, 128],    # Class 6: dark cyan
+    [128, 128, 128],  # Class 7: gray
+    [64, 0, 0],       # Class 8: maroon
+    [192, 0, 0],      # Class 9: red
+    [64, 128, 0],     # Class 10: olive
+    [192, 128, 0],    # Class 11: orange
+    [64, 0, 128],     # Class 12: purple
+    [192, 0, 128],    # Class 13: magenta
+    [64, 128, 128],   # Class 14: teal
+    [192, 128, 128],  # Class 15: light gray
+    [0, 64, 0],       # Class 16: dark green
+    [128, 64, 0],     # Class 17: brown
+    [0, 192, 0],      # Class 18: lime
+    [128, 192, 0],    # Class 19: chartreuse
+    [0, 64, 128],     # Class 20: navy
+    [128, 64, 128],   # Class 21: medium purple
+    [0, 192, 128],    # Class 22: aquamarine
+], dtype=np.uint8)
+
 
 def get_frame_size(url):
     """
@@ -91,7 +117,8 @@ def livestream_2(url):
 
             # Apply segmentation model to the frame
             segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), model).astype(np.uint8)
-            segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
+            segmented_frame_img_rgb = color_map[segmented_frame_np_gray]
+            # segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
             segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
