@@ -10,8 +10,8 @@ from PIL import Image
 
 # Model properties
 MODEL = model_inference.model_unet
-MODEL_ENCODER = MODEL.encoder.__class__.__name__
-MODEL_DECODER = MODEL.decoder.__class__.__name__
+MODEL_ENCODER_NAME = MODEL.encoder.__class__.__name__
+MODEL_DECODER_NAME = MODEL.decoder.__class__.__name__
 MODEL_ON = True
 COLOR_MAP = np.array([
     [0, 0, 0],        # Class 0: black
@@ -61,23 +61,6 @@ FONT_SCALE = 1
 FONT_COLOR = (255, 255, 255)
 THICKNESS = 1
 LINE_TYPE = 2
-
-
-def get_frame_size(url):
-    """
-    Retrieves the width and height of a video frame from a given URL.
-
-    Args:
-        url (str): The URL of the video to probe.
-
-    Returns:
-        tuple: A tuple containing the width and height of the video frame.
-    """
-    probe = ffmpeg.probe(url, v='error', select_streams='v:0', show_entries='stream=width,height')
-    video_stream = probe['streams'][0]
-    width = video_stream['width']
-    height = video_stream['height']
-    return width, height
 
 
 def livestream_2(url):
@@ -155,7 +138,7 @@ def livestream_2(url):
                     FONT_COLOR,
                     THICKNESS,
                     LINE_TYPE)
-        cv2.putText(output_frame, f'Encoder/Decoder: {MODEL_ENCODER}/{MODEL_DECODER}',
+        cv2.putText(output_frame, f'Encoder/Decoder: {MODEL_ENCODER_NAME}/{MODEL_DECODER_NAME}',
                     MODEL_DESCRIPTION_LOCATION,
                     FONT,
                     FONT_SCALE,
