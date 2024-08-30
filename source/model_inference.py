@@ -9,7 +9,7 @@ from torchvision import transforms
 import torch
 import time
 
-MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V1.pt'
+MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V3.pt'
 
 
 def load_segmentation_model(model_path):
