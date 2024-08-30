@@ -8,10 +8,25 @@ import model_inference
 import stream_diagnostics
 from PIL import Image
 
-model = model_inference.model_unet
-model_on = True
+MODEL = model_inference.model_unet
+MODEL_ON = True
+FPS = 1
 
-color_map = np.array([
+FRAME_WIDTH = 1280
+FRAME_HEIGHT = 720
+FRAME_RESIZE_WIDTH = 704
+FRAME_RESIZE_HEIGHT = 720
+
+# Set font properties
+FONT = cv2.FONT_HERSHEY_SIMPLEX
+FPS_LOCATION = (10, 50)
+SHAPE_LOCATION = (10, 75)
+FONT_SCALE = 1
+FONT_COLOR = (255, 255, 255)
+THICKNESS = 1
+LINE_TYPE = 2
+
+COLOR_MAP = np.array([
     [0, 0, 0],        # Class 0: black
     [128, 0, 0],      # Class 1: dark red
     [0, 128, 0],      # Class 2: dark green
@@ -69,15 +84,6 @@ def livestream_2(url):
         None
     """
 
-    # Set font properties
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    fps_location = (10, 50)
-    shape_location = (10, 75)
-    fontScale = 1
-    fontColor = (255, 255, 255)
-    thickness = 1
-    lineType = 2
-
     # Get frame size
     # width, height = get_frame_size(url)
     frame_size = 1280 * 720 * 3
@@ -86,7 +92,7 @@ def livestream_2(url):
     # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, **{'an': None, 'r': '1'})  # Audio Disabled in second parameter.
+        .input(url, **{'an': None, 'r': f'{FPS}'})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .global_args('-threads', '8')
         .global_args('-c:v', 'h264_videotoolbox')  # Use VideoToolbox for encoding
@@ -113,11 +119,11 @@ def livestream_2(url):
 
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
 
-        if model_on:
+        if MODEL_ON:
 
             # Apply segmentation model to the frame
-            segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), model).astype(np.uint8)
-            segmented_frame_img_rgb = color_map[segmented_frame_np_gray]
+            segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), MODEL).astype(np.uint8)
+            segmented_frame_img_rgb = COLOR_MAP[segmented_frame_np_gray]
             # segmented_frame_img_rgb = cv2.cvtColor(segmented_frame_np_gray, cv2.COLOR_GRAY2RGB)
             segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
@@ -130,19 +136,19 @@ def livestream_2(url):
             output_frame = in_frame
 
         cv2.putText(output_frame, f'FPS: {0}',
-                    fps_location,
-                    font,
-                    fontScale,
-                    fontColor,
-                    thickness,
-                    lineType)
+                    FPS_LOCATION,
+                    FONT,
+                    FONT_SCALE,
+                    FONT_COLOR,
+                    THICKNESS,
+                    LINE_TYPE)
         cv2.putText(output_frame, f'Shape: {1280}x{720}',
-                    shape_location,
-                    font,
-                    fontScale,
-                    fontColor,
-                    thickness,
-                    lineType)
+                    SHAPE_LOCATION,
+                    FONT,
+                    FONT_SCALE,
+                    FONT_COLOR,
+                    THICKNESS,
+                    LINE_TYPE)
 
         # Display the frame
         cv2.imshow('RTMP Stream', output_frame)
