@@ -23,7 +23,7 @@ def load_segmentation_model(model_path):
         model (nn.Module): The loaded segmentation model.
     """
     model = torch.load(model_path, map_location=torch.device('mps' if torch.cuda.is_available() else 'cpu'))
-    print(f'Model loaded from {model_path} at time {time.ctime()}')
+    print(f'\nModel loaded from "{model_path}" at time {time.ctime()}')
 
     model.eval()  # Set the model to evaluation mode
     print(f'Model set to evaluation mode at time {time.ctime()}')

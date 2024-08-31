@@ -14,5 +14,3 @@ TRAINING_DATA_PATH = ''
 
 # Model
 MODEL_PATH = ''
-
-

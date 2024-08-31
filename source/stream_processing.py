@@ -1,11 +1,8 @@
 import time
-import threading
-from queue import Queue
 import ffmpeg
 import numpy as np
 import cv2
 import model_inference
-import stream_diagnostics
 from PIL import Image
 
 # Model properties
@@ -77,10 +74,6 @@ def livestream_2(url):
         None
     """
 
-    # Get frame size
-    # width, height = get_frame_size(url)
-    frame_size = FRAME_WIDTH * FRAME_HEIGHT * NUM_CHANNELS
-
     print(f'Initiated FFmpeg process at time {time.ctime()}')
     # Set up FFmpeg process
     process = (
@@ -93,12 +86,11 @@ def livestream_2(url):
     )
     print(f'FFmpeg process connected at time {time.ctime()}')
 
-    # Create a named window
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
+    frame_size = FRAME_WIDTH * FRAME_HEIGHT * NUM_CHANNELS
 
     while True:
-        # Calculate frame size based on width and height
-        in_bytes = process.stdout.read(frame_size)
+        in_bytes = process.stdout.read(frame_size) # Read frame in byte format
 
         # If no data is read, continue to check for errors
         if len(in_bytes) != frame_size:
@@ -108,7 +100,7 @@ def livestream_2(url):
                 print("Error: Read incomplete frame")
             break
 
-        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
+        in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy() # Convert to numpy array
 
         if MODEL_ON:
             # Apply segmentation model to the frame
