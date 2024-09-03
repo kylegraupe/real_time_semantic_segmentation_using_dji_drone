@@ -20,11 +20,12 @@ def main():
     print(f'\tIP Address: {settings.ip_address}')
     print(f'\tListening Port: {settings.LISTENING_PORT}')
 
-    # root = tk.Tk()
-    # app = user_interface.StreamApp(root, lambda: lambda: stream_processing.livestream_executive(settings.RTMP_URL, app))
-    # root.mainloop()
-
-    stream_processing.livestream_executive(settings.RTMP_URL)
+    if settings.UI_ON:
+        root = tk.Tk()
+        app = user_interface.StreamApp(root, lambda: stream_processing.livestream_executive(settings.RTMP_URL, app))
+        root.mainloop()
+    else:
+        stream_processing.livestream_executive(settings.RTMP_URL)
 
 
 if __name__ == "__main__":

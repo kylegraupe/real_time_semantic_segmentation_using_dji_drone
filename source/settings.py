@@ -14,6 +14,7 @@ VERSION = '1.0.0'
 ENVIRONMENT = 'development'
 TRAIN = False
 SHOW_DEBUG_PROFILE = False
+UI_ON = True
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935

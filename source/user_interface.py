@@ -49,8 +49,3 @@ class StreamApp:
         # Update the video display
         self.video_label.imgtk = imgtk
         self.video_label.configure(image=imgtk)
-
-# def start_stream():
-#     root = tk.Tk()
-#     app = StreamApp(root, lambda: print("Stream started"))
-#     root.mainloop()
