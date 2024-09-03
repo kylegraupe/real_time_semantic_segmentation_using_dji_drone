@@ -81,7 +81,7 @@ LINE_TYPE = 2
 FOV = 82.1
 
 # Output Properties
-SIDE_BY_SIDE = True
+SIDE_BY_SIDE = True # Display both original and segmented frames side-by-side
 
 
 
