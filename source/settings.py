@@ -2,15 +2,18 @@
 This file contains the settings and global variables for the application.
 """
 
+# public libraries
 import numpy as np
 import cv2
 
+# imports from source
 import model_inference
 
 # Application Environment
 VERSION = '1.0.0'
 ENVIRONMENT = 'development'
 TRAIN = False
+SHOW_DEBUG_PROFILE = False
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935
@@ -19,7 +22,7 @@ RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
 MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V3.pt'
-MODEL = model_inference.load_segmentation_model(MODEL_PATH)
+MODEL, DEVICE = model_inference.load_segmentation_model(MODEL_PATH)
 MODEL_ENCODER_NAME = MODEL.encoder.__class__.__name__
 MODEL_DECODER_NAME = MODEL.decoder.__class__.__name__
 MODEL_ON = True
@@ -49,9 +52,11 @@ COLOR_MAP = np.array([
     [0, 192, 128],    # Class 22: aquamarine
 ], dtype=np.uint8)
 NUM_CHANNELS = 3 # RGB
+BATCH_SIZE = 5
 
 # Stream properties
-FPS = 1
+INPUT_FPS = 30
+OUTPUT_FPS = 0.5
 NUM_THREADS = 4
 PIPE_STDOUT = True
 PIPE_STDERR = True
@@ -74,6 +79,9 @@ LINE_TYPE = 2
 
 # DJI Mini 4 Pro Specs
 FOV = 82.1
+
+# Output Properties
+SIDE_BY_SIDE = True
 
 
 

@@ -6,7 +6,10 @@ import stream_processing
 import settings
 import time
 
-if __name__ == "__main__":
+import cProfile
+import pstats
+
+def main():
     print(f'Application started at time {time.ctime()}')
     print(f'\tVersion: {settings.VERSION}')
     print(f'\tEnvironment: {settings.ENVIRONMENT}')
@@ -15,3 +18,17 @@ if __name__ == "__main__":
     print(f'\tListening Port: {settings.LISTENING_PORT}')
 
     stream_processing.livestream_executive(settings.RTMP_URL)
+
+if __name__ == "__main__":
+
+    if settings.SHOW_DEBUG_PROFILE:
+        profiler = cProfile.Profile()
+        profiler.enable()
+
+        main()
+
+        profiler.disable()
+        stats = pstats.Stats(profiler).sort_stats('cumtime')
+        stats.print_stats()
+    else:
+        main()

@@ -37,3 +37,4 @@ image processing and semantic segmentation on the video stream.
 ## REFERENCES
 - Model Training Conducted in Kaggle Jupyter Notebook Environment:
   - https://www.kaggle.com/code/kylegraupe/model-training-dji-real-time-semantic-segmentation
+  - Model also included in repository: 'model_training/model-training-dji-real-time-semantic-seg-v1.ipynb'
