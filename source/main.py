@@ -7,6 +7,7 @@ if __name__ == "__main__":
     print(f'\tVersion: {settings.VERSION}')
     print(f'\tEnvironment: {settings.ENVIRONMENT}')
     print(f'\tRTMP URL: {settings.RTMP_URL}')
+    print(f'\tIP Address: {settings.ip_address}')
     print(f'\tListening Port: {settings.LISTENING_PORT}')
 
     stream_processing.livestream_2(settings.RTMP_URL)
