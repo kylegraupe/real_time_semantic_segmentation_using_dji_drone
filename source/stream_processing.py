@@ -30,7 +30,7 @@ def livestream_executive(url):
     """
 
     print(f'Initiated FFmpeg process at time {time.ctime()}')
-    # # Set up FFmpeg process
+    # Set up FFmpeg process
     process = (
         ffmpeg
         .input(url, an=None)  # Audio Disabled in second parameter.
@@ -38,7 +38,6 @@ def livestream_executive(url):
         .global_args('-c:v', 'libx264')  # Use VideoToolbox for encoding
         .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
     )
-
     print(f'FFmpeg process connected at time {time.ctime()}')
 
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)

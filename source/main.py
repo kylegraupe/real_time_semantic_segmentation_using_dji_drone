@@ -4,10 +4,13 @@ This file contains the main code for the application. Run to execute the applica
 
 import stream_processing
 import settings
-import time
+import user_interface
 
+import time
 import cProfile
 import pstats
+import tkinter as tk
+
 
 def main():
     print(f'Application started at time {time.ctime()}')
@@ -17,7 +20,12 @@ def main():
     print(f'\tIP Address: {settings.ip_address}')
     print(f'\tListening Port: {settings.LISTENING_PORT}')
 
+    # root = tk.Tk()
+    # app = user_interface.StreamApp(root, lambda: lambda: stream_processing.livestream_executive(settings.RTMP_URL, app))
+    # root.mainloop()
+
     stream_processing.livestream_executive(settings.RTMP_URL)
+
 
 if __name__ == "__main__":
 
