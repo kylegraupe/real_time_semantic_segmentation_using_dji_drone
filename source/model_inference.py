@@ -4,12 +4,10 @@ This script contains the code for the model inference.
 Video frames are passed to the model and the predicted RGB mask is returned.
 """
 
-from PIL import Image
 from torchvision import transforms
 import torch
 import time
 
-MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V3.pt'
 
 
 def load_segmentation_model(model_path):
@@ -72,6 +70,3 @@ def image_to_tensor(img, trained_model):
     output_labels_np = output_labels.squeeze().cpu().numpy()
 
     return output_labels_np
-
-
-model_unet = load_segmentation_model(MODEL_PATH)

@@ -1,66 +1,19 @@
+"""
+This script establishes the connection to the drone's RTMP stream, reads frames, and applies the semenatic segmentation
+model to the frames. The segmented frames are then displayed in a named window until the 'q' key is pressed.
+"""
+
 import time
 import ffmpeg
 import numpy as np
 import cv2
-import model_inference
 from PIL import Image
 
-# Model properties
-MODEL = model_inference.model_unet
-MODEL_ENCODER_NAME = MODEL.encoder.__class__.__name__
-MODEL_DECODER_NAME = MODEL.decoder.__class__.__name__
-MODEL_ON = True
-COLOR_MAP = np.array([
-    [0, 0, 0],        # Class 0: black
-    [128, 0, 0],      # Class 1: dark red
-    [0, 128, 0],      # Class 2: dark green
-    [128, 128, 0],    # Class 3: dark yellow
-    [0, 0, 128],      # Class 4: dark blue
-    [128, 0, 128],    # Class 5: dark purple
-    [0, 128, 128],    # Class 6: dark cyan
-    [128, 128, 128],  # Class 7: gray
-    [64, 0, 0],       # Class 8: maroon
-    [192, 0, 0],      # Class 9: red
-    [64, 128, 0],     # Class 10: olive
-    [192, 128, 0],    # Class 11: orange
-    [64, 0, 128],     # Class 12: purple
-    [192, 0, 128],    # Class 13: magenta
-    [64, 128, 128],   # Class 14: teal
-    [192, 128, 128],  # Class 15: light gray
-    [0, 64, 0],       # Class 16: dark green
-    [128, 64, 0],     # Class 17: brown
-    [0, 192, 0],      # Class 18: lime
-    [128, 192, 0],    # Class 19: chartreuse
-    [0, 64, 128],     # Class 20: navy
-    [128, 64, 128],   # Class 21: medium purple
-    [0, 192, 128],    # Class 22: aquamarine
-], dtype=np.uint8)
-NUM_CHANNELS = 3 # RGB
-
-# Stream properties
-FPS = 1
-NUM_THREADS = 4
-PIPE_STDOUT = True
-PIPE_STDERR = True
-
-# Frame properties
-FRAME_WIDTH = 1280
-FRAME_HEIGHT = 720
-RESIZE_FRAME_WIDTH = 1280
-RESIZE_FRAME_HEIGHT = 704
-
-# Set font properties
-FONT = cv2.FONT_HERSHEY_SIMPLEX
-FPS_LOCATION = (10, 50)
-SHAPE_LOCATION = (10, 75)
-MODEL_DESCRIPTION_LOCATION = (10, 100)
-FONT_SCALE = 1
-FONT_COLOR = (255, 255, 255)
-THICKNESS = 1
-LINE_TYPE = 2
+import model_inference
+import settings
 
 
-def livestream_2(url):
+def livestream_executive(url):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
     applies a segmentation model to the frames, and displays both the original
@@ -78,16 +31,16 @@ def livestream_2(url):
     # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, **{'an': None, 'r': f'{FPS}'})  # Audio Disabled in second parameter.
+        .input(url, **{'an': None, 'r': f'{settings.FPS}'})  # Audio Disabled in second parameter.
         .output('pipe:', format='rawvideo', pix_fmt='bgr24')
         .global_args('-threads', '4')
         .global_args('-c:v', 'h264_videotoolbox')  # Use VideoToolbox for encoding
-        .run_async(pipe_stdout=True, pipe_stderr=True)
+        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
     )
     print(f'FFmpeg process connected at time {time.ctime()}')
 
     cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
-    frame_size = FRAME_WIDTH * FRAME_HEIGHT * NUM_CHANNELS
+    frame_size = settings.FRAME_WIDTH * settings.FRAME_HEIGHT * settings.NUM_CHANNELS
 
     while True:
         in_bytes = process.stdout.read(frame_size) # Read frame in byte format
@@ -102,10 +55,10 @@ def livestream_2(url):
 
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy() # Convert to numpy array
 
-        if MODEL_ON:
+        if settings.MODEL_ON:
             # Apply segmentation model to the frame
-            segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), MODEL).astype(np.uint8)
-            segmented_frame_img_rgb = COLOR_MAP[segmented_frame_np_gray]
+            segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL).astype(np.uint8)
+            segmented_frame_img_rgb = settings.COLOR_MAP[segmented_frame_np_gray]
             segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
@@ -116,27 +69,27 @@ def livestream_2(url):
         else:
             output_frame = in_frame
 
-        cv2.putText(output_frame, f'FPS: {FPS}',
-                    FPS_LOCATION,
-                    FONT,
-                    FONT_SCALE,
-                    FONT_COLOR,
-                    THICKNESS,
-                    LINE_TYPE)
-        cv2.putText(output_frame, f'Shape: {RESIZE_FRAME_WIDTH}x{RESIZE_FRAME_HEIGHT}',
-                    SHAPE_LOCATION,
-                    FONT,
-                    FONT_SCALE,
-                    FONT_COLOR,
-                    THICKNESS,
-                    LINE_TYPE)
-        cv2.putText(output_frame, f'Encoder/Decoder: {MODEL_ENCODER_NAME}/{MODEL_DECODER_NAME}',
-                    MODEL_DESCRIPTION_LOCATION,
-                    FONT,
-                    FONT_SCALE,
-                    FONT_COLOR,
-                    THICKNESS,
-                    LINE_TYPE)
+        cv2.putText(output_frame, f'FPS: {settings.FPS}',
+                    settings.FPS_LOCATION,
+                    settings.FONT,
+                    settings.FONT_SCALE,
+                    settings.FONT_COLOR,
+                    settings.THICKNESS,
+                    settings.LINE_TYPE)
+        cv2.putText(output_frame, f'Shape: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}',
+                    settings.SHAPE_LOCATION,
+                    settings.FONT,
+                    settings.FONT_SCALE,
+                    settings.FONT_COLOR,
+                    settings.THICKNESS,
+                    settings.LINE_TYPE)
+        cv2.putText(output_frame, f'Encoder/Decoder: {settings.MODEL_ENCODER_NAME}/{settings.MODEL_DECODER_NAME}',
+                    settings.MODEL_DESCRIPTION_LOCATION,
+                    settings.FONT,
+                    settings.FONT_SCALE,
+                    settings.FONT_COLOR,
+                    settings.THICKNESS,
+                    settings.LINE_TYPE)
 
 
         # Display the frame
