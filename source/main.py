@@ -7,6 +7,12 @@ import cProfile
 import pstats
 import tkinter as tk
 
+def stop_stream_callback():
+    # Logic to stop the FFmpeg process or any other cleanup
+    print("Stopping the stream...")
+    # Example: setting a flag or calling a function to terminate the stream
+    # This can be further customized based on how you manage the stream
+
 
 def main():
     print(f'Application started at time {time.ctime()}')
@@ -18,7 +24,7 @@ def main():
 
     if settings.UI_ON:
         root = tk.Tk()
-        app = user_interface.StreamApp(root, lambda: stream_processing.livestream_executive(settings.RTMP_URL, app))
+        app = user_interface.StreamApp(root, lambda: stream_processing.livestream_executive(settings.RTMP_URL, app), stop_stream_callback)
         root.mainloop()
     else:
         stream_processing.livestream_executive(settings.RTMP_URL)
