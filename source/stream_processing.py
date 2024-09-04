@@ -2,28 +2,23 @@
 This script establishes the connection to the drone's RTMP stream, reads frames, and applies the semenatic segmentation
 model to the frames. The segmented frames are then displayed in a named window until the 'q' key is pressed.
 """
-
-# public libraries
-import time
-import ffmpeg
-import numpy as np
 import cv2
+import numpy as np
+import time
 from PIL import Image
-
-# imports from source
-import model_inference
+import ffmpeg
 import settings
+import model_inference
 
-
-def livestream_executive(url):
+def livestream_executive(url, app):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
     applies a segmentation model to the frames, and displays both the original
-    and segmented frames side-by-side in a named window until the 'q' key is pressed.
+    and segmented frames side-by-side in the UI window.
 
     Args:
         url (str): The URL of the livestream to connect to.
-        model: The segmentation model to apply to the frames.
+        app: The StreamApp instance for updating the UI with video frames.
 
     Returns:
         None
@@ -40,7 +35,6 @@ def livestream_executive(url):
     )
     print(f'FFmpeg process connected at time {time.ctime()}')
 
-    cv2.namedWindow('RTMP Stream', cv2.WINDOW_NORMAL)
     frame_size = settings.FRAME_WIDTH * settings.FRAME_HEIGHT * settings.NUM_CHANNELS
 
     while True:
@@ -73,31 +67,25 @@ def livestream_executive(url):
         else:
             output_frame = in_frame
 
-        cv2.putText(output_frame, f'FPS: {settings.OUTPUT_FPS}',
-                    settings.FPS_LOCATION,
-                    settings.FONT,
-                    settings.FONT_SCALE,
-                    settings.FONT_COLOR,
-                    settings.THICKNESS,
-                    settings.LINE_TYPE)
-        cv2.putText(output_frame, f'Shape: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}',
-                    settings.SHAPE_LOCATION,
-                    settings.FONT,
-                    settings.FONT_SCALE,
-                    settings.FONT_COLOR,
-                    settings.THICKNESS,
-                    settings.LINE_TYPE)
-        cv2.putText(output_frame, f'Encoder/Decoder: {settings.MODEL_ENCODER_NAME}/{settings.MODEL_DECODER_NAME}',
-                    settings.MODEL_DESCRIPTION_LOCATION,
-                    settings.FONT,
-                    settings.FONT_SCALE,
-                    settings.FONT_COLOR,
-                    settings.THICKNESS,
-                    settings.LINE_TYPE)
+        # Resize the output frame to fit the display area
+        display_width = settings.VIDEO_DISPLAY_WIDTH
+        display_height = settings.VIDEO_DISPLAY_HEIGHT
 
+        if output_frame.shape[1] > display_width or output_frame.shape[0] > display_height:
+            # Calculate the aspect ratio
+            aspect_ratio = output_frame.shape[1] / output_frame.shape[0]
+            if output_frame.shape[1] > display_width:
+                new_width = display_width
+                new_height = int(display_width / aspect_ratio)
+            else:
+                new_height = display_height
+                new_width = int(display_height * aspect_ratio)
 
-        # Display the frame
-        cv2.imshow('RTMP Stream', output_frame)
+            # Resize the frame
+            output_frame = cv2.resize(output_frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
+
+        # Update the UI with the processed frame
+        app.update_video_display(output_frame)
 
         # Exit if the 'q' key is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -106,4 +94,3 @@ def livestream_executive(url):
     # Release the capture and close windows
     process.stdout.close()
     process.wait()
-    cv2.destroyAllWindows()

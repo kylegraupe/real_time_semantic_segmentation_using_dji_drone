@@ -67,6 +67,9 @@ FRAME_WIDTH = 1280
 FRAME_HEIGHT = 720
 RESIZE_FRAME_WIDTH = 1280
 RESIZE_FRAME_HEIGHT = 704 # U-Net architecture requires input dimensions to be divisible by 32.
+VIDEO_DISPLAY_WIDTH = 1280  # Width of the video display area
+VIDEO_DISPLAY_HEIGHT = 704  # Height of the video display area
+
 
 # Font properties for text overlays
 FONT = cv2.FONT_HERSHEY_SIMPLEX

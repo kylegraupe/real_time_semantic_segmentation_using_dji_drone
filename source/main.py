@@ -1,7 +1,3 @@
-"""
-This file contains the main code for the application. Run to execute the application.
-"""
-
 import stream_processing
 import settings
 import user_interface
