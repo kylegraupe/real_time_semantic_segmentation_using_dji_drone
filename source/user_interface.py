@@ -38,6 +38,9 @@ class StreamApp:
         # Apply the background color to the window
         self.root.configure(bg=self.bg_color)
 
+        # Load and display the logo
+        self.load_logo()
+
         # Create the sidebar frame
         self.sidebar_frame = tk.Frame(self.root, bg=self.bg_color, width=200, padx=10, pady=10)
         self.sidebar_frame.grid(row=0, column=0, sticky="ns", rowspan=2)
@@ -53,8 +56,23 @@ class StreamApp:
         # Configure grid weights
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_rowconfigure(2, weight=1)
+
         self.root.grid_columnconfigure(0, weight=0)
         self.root.grid_columnconfigure(1, weight=1)
+
+    def load_logo(self):
+        # Load and display the logo
+        logo_path = "/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/assets/graupe.io logo 1.png"  # Update this with the path to your logo
+        logo_image = Image.open(logo_path)
+        logo_image = logo_image.resize((250, 150))  # Adjust size as needed
+        self.logo_imgtk = ImageTk.PhotoImage(logo_image)
+
+        # Create a label for the logo
+        self.logo_label = tk.Label(self.root, image=self.logo_imgtk, bg=self.bg_color)
+
+        # Position the logo with margins
+        self.logo_label.grid(row=2, column=0, padx=20, pady=20)  # Margin of 20 pixels from the left and bottom
 
     def create_sidebar(self):
         # Create inputs for settings
