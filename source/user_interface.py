@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 import threading
 import settings
 
+
 class StreamApp:
     def __init__(self, root, start_stream_callback, stop_stream_callback):
         self.root = root
@@ -40,70 +41,81 @@ class StreamApp:
 
         # Create the sidebar frame
         self.sidebar_frame = tk.Frame(self.root, bg=self.bg_color, width=200, padx=10, pady=10)
-        self.sidebar_frame.grid(row=0, column=0, sticky="ns", rowspan=2)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=2, sticky="ns")
+
+        # Create the input settings frame
+        self.input_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
+        self.input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Create the button frame
+        self.button_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
+        self.button_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         # Create the video display frame
-        self.video_frame = tk.Frame(self.root, bg=self.video_label_bg)
-        self.video_frame.grid(row=0, column=1, sticky="nsew")
+        self.video_frame = tk.Frame(self.root, bg=self.video_label_bg, bd=2, relief="raised")
+        self.video_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+
+        # Create the stream characteristics frame
+        self.stream_char_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
+        self.stream_char_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         # Create the grid layout
-        self.create_sidebar()
+        self.create_input_settings()
+        self.create_buttons()
         self.create_video_display()
+        self.create_stream_characteristics()
 
         # Configure grid weights
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_rowconfigure(1, weight=1)
         self.root.grid_rowconfigure(2, weight=1)
-
         self.root.grid_columnconfigure(0, weight=0)
         self.root.grid_columnconfigure(1, weight=1)
 
-    def toggle_fullscreen(self, event=None):
-        # Toggle full-screen mode
-        self.root.attributes("-fullscreen", True)
-
-    def exit_fullscreen(self, event=None):
-        # Exit full-screen mode
-        self.root.attributes("-fullscreen", False)
-
     def load_logo(self):
         # Load and display the logo
-        logo_path = "/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/assets/graupe.io logo 1.png"  # Update this with the path to your logo
+        logo_path = "/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/assets/graupe.io logo 1.png"
         logo_image = Image.open(logo_path)
         logo_image = logo_image.resize((250, 150))  # Adjust size as needed
         self.logo_imgtk = ImageTk.PhotoImage(logo_image)
 
         # Create a label for the logo
-        self.logo_label = tk.Label(self.root, image=self.logo_imgtk, bg=self.bg_color)
+        self.logo_label = tk.Label(self.root, image=self.logo_imgtk, bg=self.bg_color, bd=2, relief="solid")
 
-        # Position the logo with margins (bottom-left corner)
-        self.logo_label.grid(row=2, column=0, padx=20, pady=(0, 20), sticky="sw")
+        # Position the logo with margins
+        self.logo_label.grid(row=2, column=0, padx=20, pady=20)  # Margin of 20 pixels from the left and bottom
 
-    def create_sidebar(self):
-        # Create inputs for settings
-        self.create_settings_inputs()
+    def create_input_settings(self):
+        # Input settings for various parameters
+        tk.Label(self.input_frame, text="Output FPS:", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w")
+        self.output_fps_entry = tk.Entry(self.input_frame, bg=self.entry_bg_color, fg=self.entry_fg_color)
+        self.output_fps_entry.insert(0, str(settings.OUTPUT_FPS))
+        self.output_fps_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+
+        # Add more inputs as needed
+        # ...
+
+    def create_buttons(self):
+        # Set the button width to be slightly less than the frame width
+        button_width = 30  # Adjust this value as needed for your layout
 
         # Execute button
-        self.execute_button = tk.Button(self.sidebar_frame, text="Start Stream", command=self.start_stream,
-                                        bg=self.button_color, fg=self.button_text_color)
-        self.execute_button.grid(row=4, column=0, pady=10, sticky="ew")
+        self.execute_button = tk.Button(self.button_frame, text="Start Stream", command=self.start_stream,
+                                        bg=self.button_color, fg=self.button_text_color, bd=1, relief="raised",
+                                        width=button_width)
+        self.execute_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
 
         # Stop button
-        self.stop_button = tk.Button(self.sidebar_frame, text="Stop Stream", command=self.stop_stream,
-                                     bg=self.button_color, fg=self.button_text_color, state=tk.DISABLED)
-        self.stop_button.grid(row=5, column=0, pady=10, sticky="ew")
+        self.stop_button = tk.Button(self.button_frame, text="Stop Stream", command=self.stop_stream,
+                                     bg=self.button_color, fg=self.button_text_color, state=tk.DISABLED, bd=1,
+                                     relief="raised", width=button_width)
+        self.stop_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
 
         # Close App button
-        self.close_button = tk.Button(self.sidebar_frame, text="Close App", command=self.exit_and_close,
-                                      bg=self.button_color, fg=self.button_text_color)
-        self.close_button.grid(row=6, column=0, pady=10, sticky="ew")
-
-    def create_settings_inputs(self):
-        # Example: input for OUTPUT_FPS
-        tk.Label(self.sidebar_frame, text="Output FPS:", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w")
-        self.output_fps_entry = tk.Entry(self.sidebar_frame, bg=self.entry_bg_color, fg=self.entry_fg_color)
-        self.output_fps_entry.insert(0, str(settings.OUTPUT_FPS))
-        self.output_fps_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        self.close_button = tk.Button(self.button_frame, text="Close App", command=self.exit_and_close,
+                                      bg=self.button_color, fg=self.button_text_color, bd=1, relief="raised",
+                                      width=button_width)
+        self.close_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
 
     def create_video_display(self):
         # Video display label (for the video frame)
@@ -121,6 +133,31 @@ class StreamApp:
             self.stop_button.config(state=tk.NORMAL)
             self.stream_thread = threading.Thread(target=self.start_stream_callback)
             self.stream_thread.start()
+
+    def create_stream_characteristics(self):
+        # Stream characteristics (e.g., resolution, bitrate)
+        tk.Label(self.stream_char_frame, text="Stream Characteristics:", underline=True, bg=self.bg_color, fg=self.fg_color).grid(row=0,
+                                                                                                                  column=0,
+                                                                                                                  sticky="w")
+
+        # Add stream characteristics labels and values
+        tk.Label(self.stream_char_frame, text=f"Resolution: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}"
+                 , bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Listening Port: {str(settings.LISTENING_PORT)}", bg=self.bg_color, fg=self.fg_color).grid(row=2,
+                                                                                                             column=0,
+                                                                                                             sticky="w")
+        tk.Label(self.stream_char_frame, text=f"Input FPS: {str(settings.INPUT_FPS)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=0, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Output FPS: {str(settings.OUTPUT_FPS)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=0, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Model Encoder: {str(settings.MODEL_ENCODER_NAME)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=1, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Model Decoder: {str(settings.MODEL_DECODER_NAME)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=1, sticky="w")
 
     def stop_stream(self):
         # Stop the stream
@@ -148,3 +185,12 @@ class StreamApp:
         self.stop_stream()
         # Exit the application
         self.root.quit()  # This will close the application
+
+    def toggle_fullscreen(self, event=None):
+        # Toggle full-screen mode
+        self.root.attributes("-fullscreen", True)
+
+    def exit_fullscreen(self, event=None):
+        # Exit full-screen mode
+        self.root.attributes("-fullscreen", False)
+
