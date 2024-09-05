@@ -1,9 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-
 import threading
 import settings
-
 
 class StreamApp:
     def __init__(self, root, start_stream_callback, stop_stream_callback):
@@ -15,14 +13,15 @@ class StreamApp:
         self.is_streaming = False
         self.process = None
 
-        # Set the window size to cover most of the screen
+        # Set initial window size to the screen's resolution
         self.root.geometry(f"{self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}+0+0")
 
-        # Disable resizing
-        self.root.resizable(False, False)
+        # Enable resizing for macOS full-screen functionality
+        self.root.resizable(True, True)
 
-        # Bind the Escape key to exit the app
-        self.root.bind('<Escape>', self.exit_and_close)
+        # Allow full screen with the green button and bind the Escape key to exit full screen
+        self.root.bind('<F11>', self.toggle_fullscreen)
+        self.root.bind('<Escape>', self.exit_fullscreen)
 
         # Set the theme colors
         self.bg_color = "#1e1e2e"  # Dark purple
@@ -59,6 +58,14 @@ class StreamApp:
         self.root.grid_columnconfigure(0, weight=0)
         self.root.grid_columnconfigure(1, weight=1)
 
+    def toggle_fullscreen(self, event=None):
+        # Toggle full-screen mode
+        self.root.attributes("-fullscreen", True)
+
+    def exit_fullscreen(self, event=None):
+        # Exit full-screen mode
+        self.root.attributes("-fullscreen", False)
+
     def load_logo(self):
         # Load and display the logo
         logo_path = "/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/assets/graupe.io logo 1.png"  # Update this with the path to your logo
@@ -69,8 +76,8 @@ class StreamApp:
         # Create a label for the logo
         self.logo_label = tk.Label(self.root, image=self.logo_imgtk, bg=self.bg_color)
 
-        # Position the logo with margins
-        self.logo_label.grid(row=2, column=0, padx=20, pady=20)  # Margin of 20 pixels from the left and bottom
+        # Position the logo with margins (bottom-left corner)
+        self.logo_label.grid(row=2, column=0, padx=20, pady=(0, 20), sticky="sw")
 
     def create_sidebar(self):
         # Create inputs for settings
@@ -97,9 +104,6 @@ class StreamApp:
         self.output_fps_entry = tk.Entry(self.sidebar_frame, bg=self.entry_bg_color, fg=self.entry_fg_color)
         self.output_fps_entry.insert(0, str(settings.OUTPUT_FPS))
         self.output_fps_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
-
-        # Add more inputs as needed
-        # ...
 
     def create_video_display(self):
         # Video display label (for the video frame)
@@ -144,4 +148,3 @@ class StreamApp:
         self.stop_stream()
         # Exit the application
         self.root.quit()  # This will close the application
-
