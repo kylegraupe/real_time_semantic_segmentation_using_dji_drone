@@ -6,6 +6,15 @@ import settings
 
 class StreamApp:
     def __init__(self, root, start_stream_callback, stop_stream_callback):
+        # Set the theme colors
+        self.bg_color = "#1e1e2e"  # Dark purple
+        self.fg_color = "#ffffff"  # White
+        self.button_color = "#5a5a8b"  # Dark purple-grey
+        self.button_text_color = "#000000"  # Black
+        self.entry_bg_color = "#2b2b3c"  # Slightly lighter purple
+        self.entry_fg_color = "#ffffff"  # White
+        self.video_label_bg = "#000000"  # Black for video background
+
         self.root = root
         self.root.title("RTMP Stream GUI")
         self.start_stream_callback = start_stream_callback
@@ -24,14 +33,6 @@ class StreamApp:
         self.root.bind('<F11>', self.toggle_fullscreen)
         self.root.bind('<Escape>', self.exit_fullscreen)
 
-        # Set the theme colors
-        self.bg_color = "#1e1e2e"  # Dark purple
-        self.fg_color = "#ffffff"  # White
-        self.button_color = "#5a5a8b"  # Dark purple-grey
-        self.button_text_color = "#000000"  # Black
-        self.entry_bg_color = "#2b2b3c"  # Slightly lighter purple
-        self.entry_fg_color = "#ffffff"  # White
-        self.video_label_bg = "#000000"  # Black for video background
 
         # Apply the background color to the window
         self.root.configure(bg=self.bg_color)
@@ -49,7 +50,7 @@ class StreamApp:
 
         # Create the button frame
         self.button_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
-        self.button_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.button_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         # Create the video display frame
         self.video_frame = tk.Frame(self.root, bg=self.video_label_bg, bd=2, relief="raised")
@@ -57,7 +58,7 @@ class StreamApp:
 
         # Create the stream characteristics frame
         self.stream_char_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
-        self.stream_char_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        self.stream_char_frame.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
         # Create the grid layout
         self.create_input_settings()

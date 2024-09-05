@@ -18,7 +18,10 @@ UI_ON = True
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935
-ip_address = '10.0.0.17'
+# ip_address = '10.0.0.17'
+# RTMP_INPUT_URL = f'rtmp://127.0.0.1/live'
+
+ip_address = '172.20.10.2'
 RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
