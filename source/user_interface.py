@@ -1,11 +1,9 @@
 import tkinter as tk
-from tkinter import ttk
 from PIL import Image, ImageTk
+
 import threading
 import settings
-import ffmpeg
-import os
-import signal
+
 
 class StreamApp:
     def __init__(self, root, start_stream_callback, stop_stream_callback):
@@ -147,7 +145,3 @@ class StreamApp:
         # Exit the application
         self.root.quit()  # This will close the application
 
-# Example usage:
-# root = tk.Tk()
-# app = StreamApp(root, start_stream_callback, stop_stream_callback)
-# root.mainloop()
