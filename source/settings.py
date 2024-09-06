@@ -14,14 +14,12 @@ VERSION = '1.0.0'
 ENVIRONMENT = 'development'
 TRAIN = False
 SHOW_DEBUG_PROFILE = True
-UI_ON = False
+UI_ON = True
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935
-# ip_address = '10.0.0.17'
-# RTMP_INPUT_URL = f'rtmp://127.0.0.1/live'
-
-ip_address = '172.20.10.2'
+ip_address = '10.0.0.17'
+# ip_address = '172.20.10.2'
 RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
@@ -89,6 +87,24 @@ FOV = 82.1
 
 # Output Properties
 SIDE_BY_SIDE = True # Display both original and segmented frames side-by-side
+
+# Working:
+DILATION_ON = False
+GAUSSIAN_SMOOTHING_ON = False
+EROSION_ON = False
+MEDIAN_FILTERING_ON = False
+
+
+
+
+# Not Working
+CRF_ON = False
+SMALL_ITEM_FILTER_ON = False
+ACTIVE_CONTOURS_ON = False
+WATERSHED_ON = False
+CANNY_DETECTION_ON = False
+
+
 
 
 
