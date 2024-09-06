@@ -88,19 +88,32 @@ FOV = 82.1
 # Output Properties
 SIDE_BY_SIDE = True # Display both original and segmented frames side-by-side
 
-# Working:
-DILATION_ON = False
-GAUSSIAN_SMOOTHING_ON = False
+# Postprocessing properties
+DILATION_ON = True
+DILATION_KERNEL = np.ones((5, 5), np.uint8)
+DILATION_ITERATIONS = 1
+
 EROSION_ON = False
-MEDIAN_FILTERING_ON = False
+EROSION_KERNEL = np.ones((5, 5), np.uint8)
+EROSION_ITERATIONS = 1
+
+MEDIAN_FILTERING_ON = True
+MEDIAN_FILTERING_KERNEL_SIZE = 5
+
+GAUSSIAN_SMOOTHING_ON = False
+GAUSSIAN_SMOOTHING_KERNEL_SHAPE = (5, 5)
+
+
+
 
 
 # Not Working
 CRF_ON = False
 ACTIVE_CONTOURS_ON = True
-SMALL_ITEM_FILTER_ON = False
 WATERSHED_ON = False
 CANNY_DETECTION_ON = False
+SMALL_ITEM_FILTER_ON = False
+
 
 
 

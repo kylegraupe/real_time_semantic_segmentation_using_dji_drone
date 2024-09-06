@@ -156,7 +156,10 @@ def livestream_executive_ui(url, app):
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
             segmentation_results = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
 
-            # Define the CRF layer with the number of classes
+
+            if settings.SMALL_ITEM_FILTER_ON:
+                segmentation_results = seg_post_proc.apply_conn(segmentation_results)
+
             if settings.CRF_ON:
                 in_frame, segmentation_results = seg_post_proc.apply_crf(in_frame)
 
@@ -172,8 +175,9 @@ def livestream_executive_ui(url, app):
             if settings.MEDIAN_FILTERING_ON:
                 segmentation_results = seg_post_proc.apply_median_filtering(segmentation_results)
 
-            if settings.ACTIVE_CONTOURS_ON:
-                segmentation_results = seg_post_proc.apply_active_contours(segmentation_results)
+
+            # if settings.ACTIVE_CONTOURS_ON:
+            #     segmentation_results = seg_post_proc.apply_active_contours(segmentation_results)
 
             else:
                 # Apply segmentation model to the frame

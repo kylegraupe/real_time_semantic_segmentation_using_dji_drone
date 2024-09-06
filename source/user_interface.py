@@ -160,6 +160,22 @@ class StreamApp:
         tk.Label(self.stream_char_frame, text=f"Model Decoder: {str(settings.MODEL_DECODER_NAME)}",
                  bg=self.bg_color, fg=self.fg_color).grid(row=4, column=1, sticky="w")
 
+        tk.Label(self.stream_char_frame, text="RGB Mask Post-Processing:", underline=True, bg=self.bg_color, fg=self.fg_color).grid(row=0,
+                                                                                                                  column=2,
+                                                                                                                  sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Dilation: {str(settings.DILATION_ON)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=1, column=2, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Erosion: {str(settings.EROSION_ON)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=2, column=2, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Median Blur: {str(settings.MEDIAN_FILTERING_ON)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=2, sticky="w")
+
+        tk.Label(self.stream_char_frame, text=f"Gaussian Blur: {str(settings.GAUSSIAN_SMOOTHING_ON)}",
+                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=2, sticky="w")
+
     def stop_stream(self):
         # Stop the stream
         if self.is_streaming:

@@ -22,7 +22,8 @@ from skimage.util import img_as_float
 from skimage.color import rgb2gray
 import matplotlib.pyplot as plt
 from skimage import segmentation
-
+from scipy import ndimage
+import skimage
 
 
 def ensure_rgb(segmentation_mask):
@@ -32,24 +33,22 @@ def ensure_rgb(segmentation_mask):
     return settings.COLOR_MAP[segmentation_mask.astype(np.uint8)]
 
 def apply_erosion(segmentation_mask):
-    kernel = np.ones((5, 5), np.uint8)  # Define a kernel
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
-    eroded_mask = cv2.erode(segmentation_mask_rgb, kernel, iterations=1)
+    eroded_mask = cv2.erode(segmentation_mask_rgb, settings.EROSION_KERNEL, iterations=settings.EROSION_ITERATIONS)
     return eroded_mask.astype(np.uint8)
 
 def apply_dilation(segmentation_mask):
-    kernel = np.ones((5, 5), np.uint8)  # Define a kernel
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
-    dilated_mask = cv2.dilate(segmentation_mask_rgb, kernel, iterations=1)
+    dilated_mask = cv2.dilate(segmentation_mask_rgb, settings.DILATION_KERNEL, iterations=settings.DILATION_ITERATIONS)
     return dilated_mask.astype(np.uint8)
 
 def apply_gaussian_smoothing(segmentation_mask):
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
-    return np.array(cv2.GaussianBlur(segmentation_mask_rgb, (5, 5), 0)).astype(np.uint8)
+    return np.array(cv2.GaussianBlur(segmentation_mask_rgb, settings.GAUSSIAN_SMOOTHING_KERNEL_SHAPE, 0)).astype(np.uint8)
 
 def apply_median_filtering(segmentation_mask):
     segmantion_mask_rgb = ensure_rgb(segmentation_mask)
-    return np.array(cv2.medianBlur(segmantion_mask_rgb, 5)).astype(np.uint8)
+    return np.array(cv2.medianBlur(segmantion_mask_rgb, settings.MEDIAN_FILTERING_KERNEL_SIZE)).astype(np.uint8)
 
 
 # def apply_active_contours(segmentation_mask, snake_points=None):
@@ -81,7 +80,18 @@ def apply_median_filtering(segmentation_mask):
 #
 #     return refined_contour
 
+def apply_connected_component_filter(segmentation_mask, sigma=0.5, t=0.1, connectivity=2):
 
+    # convert the image to grayscale
+    # gray_image = skimage.color.rgb2gray(segmentation_mask)
+    # denoise the image with a Gaussian filter
+    blurred_image = skimage.filters.gaussian(segmentation_mask, sigma=sigma)
+    # mask the image according to threshold
+    binary_mask = blurred_image < t
+    # perform connected component analysis
+    labeled_image, count = skimage.measure.label(binary_mask,
+                                                 connectivity=connectivity, return_num=True)
+    return labeled_image
 
 def apply_crf(in_frame):
     num_classes = 23
