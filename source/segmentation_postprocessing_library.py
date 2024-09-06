@@ -17,6 +17,12 @@ import numpy as np
 import pandas as pd
 import numpy as np
 import cv2
+from skimage.segmentation import active_contour
+from skimage.util import img_as_float
+from skimage.color import rgb2gray
+import matplotlib.pyplot as plt
+from skimage import segmentation
+
 
 
 def ensure_rgb(segmentation_mask):
@@ -45,6 +51,35 @@ def apply_median_filtering(segmentation_mask):
     segmantion_mask_rgb = ensure_rgb(segmentation_mask)
     return np.array(cv2.medianBlur(segmantion_mask_rgb, 5)).astype(np.uint8)
 
+
+# def apply_active_contours(segmentation_mask, snake_points=None):
+#     """ Apply active contours to refine the segmentation mask boundaries. """
+#     # Ensure the mask is in RGB format
+#     rgb_mask = ensure_rgb(segmentation_mask)
+#
+#     # Convert to grayscale
+#     gray_mask = cv2.cvtColor(rgb_mask, cv2.COLOR_RGB2GRAY)
+#
+#     # Set the initial contour points (snake initialization)
+#     if snake_points is None:
+#         rows, cols = gray_mask.shape
+#         snake_points = np.array([[
+#             [cols // 4, rows // 4],
+#             [3 * cols // 4, rows // 4],
+#             [3 * cols // 4, 3 * rows // 4],
+#             [cols // 4, 3 * rows // 4]
+#         ]]).reshape(-1, 2)  # Default to a rectangle shape
+#
+#     # Apply active contours (snakes)
+#     refined_contour = segmentation.active_contour(gray_mask, snake_points, alpha=0.015, beta=10, gamma=0.001)
+#
+#     # Display the result
+#     plt.figure(figsize=(7, 7))
+#     plt.imshow(rgb_mask)
+#     plt.plot(refined_contour[:, 1], refined_contour[:, 0], '-r', lw=3)
+#     plt.show()
+#
+#     return refined_contour
 
 
 

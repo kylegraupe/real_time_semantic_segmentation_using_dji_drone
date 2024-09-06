@@ -172,6 +172,9 @@ def livestream_executive_ui(url, app):
             if settings.MEDIAN_FILTERING_ON:
                 segmentation_results = seg_post_proc.apply_median_filtering(segmentation_results)
 
+            if settings.ACTIVE_CONTOURS_ON:
+                segmentation_results = seg_post_proc.apply_active_contours(segmentation_results)
+
             else:
                 # Apply segmentation model to the frame
                 segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
