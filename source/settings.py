@@ -71,7 +71,6 @@ RESIZE_FRAME_HEIGHT = 704 # U-Net architecture requires input dimensions to be d
 VIDEO_DISPLAY_WIDTH = 1280  # Width of the video display area
 VIDEO_DISPLAY_HEIGHT = 704  # Height of the video display area
 
-
 # Font properties for text overlays
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 FPS_LOCATION = (10, 50)
@@ -102,10 +101,6 @@ MEDIAN_FILTERING_KERNEL_SIZE = 5
 
 GAUSSIAN_SMOOTHING_ON = False
 GAUSSIAN_SMOOTHING_KERNEL_SHAPE = (5, 5)
-
-
-
-
 
 # Not Working
 CRF_ON = False

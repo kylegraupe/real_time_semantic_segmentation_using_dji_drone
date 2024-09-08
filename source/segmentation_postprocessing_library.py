@@ -1,29 +1,13 @@
-import torchcrf
-from torchcrf import CRF
-from skimage.util import img_as_float
-import model_inference
-import cv2
-import time
-import ffmpeg
-import numpy as np
-import cv2
-from PIL import Image
-import settings
-import model_inference
-import torch
-import torchcrf
 import cv2
 import numpy as np
-import pandas as pd
-import numpy as np
-import cv2
-from skimage.segmentation import active_contour
-from skimage.util import img_as_float
-from skimage.color import rgb2gray
-import matplotlib.pyplot as plt
-from skimage import segmentation
-from scipy import ndimage
 import skimage
+import torch
+from PIL import Image
+from skimage.util import img_as_float
+from torchcrf import CRF
+
+import model_inference
+import settings
 
 
 def ensure_rgb(segmentation_mask):
@@ -33,64 +17,65 @@ def ensure_rgb(segmentation_mask):
     return settings.COLOR_MAP[segmentation_mask.astype(np.uint8)]
 
 def apply_erosion(segmentation_mask):
+    """
+    Apply erosion to the segmentation mask to reduce the size of the segmented objects.
+
+    Args:
+        segmentation_mask (numpy array): The segmentation mask to be eroded.
+
+    Returns:
+        numpy array: The eroded segmentation mask.
+    """
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
     eroded_mask = cv2.erode(segmentation_mask_rgb, settings.EROSION_KERNEL, iterations=settings.EROSION_ITERATIONS)
     return eroded_mask.astype(np.uint8)
 
 def apply_dilation(segmentation_mask):
+    """
+    Apply dilation to the segmentation mask to increase the size of the segmented objects.
+
+    Args:
+        segmentation_mask (numpy array): The segmentation mask to be dilated.
+
+    Returns:
+        numpy array: The dilated segmentation mask.
+    """
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
     dilated_mask = cv2.dilate(segmentation_mask_rgb, settings.DILATION_KERNEL, iterations=settings.DILATION_ITERATIONS)
     return dilated_mask.astype(np.uint8)
 
 def apply_gaussian_smoothing(segmentation_mask):
+    """
+    Applies Gaussian smoothing to a segmentation mask.
+
+    Args:
+        segmentation_mask (numpy array): The segmentation mask to be smoothed.
+
+    Returns:
+        numpy array: The smoothed segmentation mask.
+    """
     segmentation_mask_rgb = ensure_rgb(segmentation_mask)
     return np.array(cv2.GaussianBlur(segmentation_mask_rgb, settings.GAUSSIAN_SMOOTHING_KERNEL_SHAPE, 0)).astype(np.uint8)
 
 def apply_median_filtering(segmentation_mask):
+    """
+    Applies a median filter to a segmentation mask.
+
+    Args:
+        segmentation_mask (numpy array): The segmentation mask to be filtered.
+
+    Returns:
+        numpy array: The filtered segmentation mask.
+    """
     segmantion_mask_rgb = ensure_rgb(segmentation_mask)
     return np.array(cv2.medianBlur(segmantion_mask_rgb, settings.MEDIAN_FILTERING_KERNEL_SIZE)).astype(np.uint8)
 
 
-# def apply_active_contours(segmentation_mask, snake_points=None):
-#     """ Apply active contours to refine the segmentation mask boundaries. """
-#     # Ensure the mask is in RGB format
-#     rgb_mask = ensure_rgb(segmentation_mask)
-#
-#     # Convert to grayscale
-#     gray_mask = cv2.cvtColor(rgb_mask, cv2.COLOR_RGB2GRAY)
-#
-#     # Set the initial contour points (snake initialization)
-#     if snake_points is None:
-#         rows, cols = gray_mask.shape
-#         snake_points = np.array([[
-#             [cols // 4, rows // 4],
-#             [3 * cols // 4, rows // 4],
-#             [3 * cols // 4, 3 * rows // 4],
-#             [cols // 4, 3 * rows // 4]
-#         ]]).reshape(-1, 2)  # Default to a rectangle shape
-#
-#     # Apply active contours (snakes)
-#     refined_contour = segmentation.active_contour(gray_mask, snake_points, alpha=0.015, beta=10, gamma=0.001)
-#
-#     # Display the result
-#     plt.figure(figsize=(7, 7))
-#     plt.imshow(rgb_mask)
-#     plt.plot(refined_contour[:, 1], refined_contour[:, 0], '-r', lw=3)
-#     plt.show()
-#
-#     return refined_contour
-
 def apply_connected_component_filter(segmentation_mask, sigma=0.5, t=0.1, connectivity=2):
 
-    # convert the image to grayscale
-    # gray_image = skimage.color.rgb2gray(segmentation_mask)
-    # denoise the image with a Gaussian filter
     blurred_image = skimage.filters.gaussian(segmentation_mask, sigma=sigma)
-    # mask the image according to threshold
     binary_mask = blurred_image < t
-    # perform connected component analysis
-    labeled_image, count = skimage.measure.label(binary_mask,
-                                                 connectivity=connectivity, return_num=True)
+    labeled_image, count = skimage.measure.label(binary_mask,connectivity=connectivity, return_num=True)
     return labeled_image
 
 def apply_crf(in_frame):
@@ -144,3 +129,32 @@ def apply_crf(in_frame):
     segmentation_results = refined_segmentation_np_rgb
 
     return in_frame, segmentation_results
+
+# def apply_active_contours(segmentation_mask, snake_points=None):
+#     """ Apply active contours to refine the segmentation mask boundaries. """
+#     # Ensure the mask is in RGB format
+#     rgb_mask = ensure_rgb(segmentation_mask)
+#
+#     # Convert to grayscale
+#     gray_mask = cv2.cvtColor(rgb_mask, cv2.COLOR_RGB2GRAY)
+#
+#     # Set the initial contour points (snake initialization)
+#     if snake_points is None:
+#         rows, cols = gray_mask.shape
+#         snake_points = np.array([[
+#             [cols // 4, rows // 4],
+#             [3 * cols // 4, rows // 4],
+#             [3 * cols // 4, 3 * rows // 4],
+#             [cols // 4, 3 * rows // 4]
+#         ]]).reshape(-1, 2)  # Default to a rectangle shape
+#
+#     # Apply active contours (snakes)
+#     refined_contour = segmentation.active_contour(gray_mask, snake_points, alpha=0.015, beta=10, gamma=0.001)
+#
+#     # Display the result
+#     plt.figure(figsize=(7, 7))
+#     plt.imshow(rgb_mask)
+#     plt.plot(refined_contour[:, 1], refined_contour[:, 0], '-r', lw=3)
+#     plt.show()
+#
+#     return refined_contour

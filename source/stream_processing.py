@@ -9,10 +9,6 @@ import cv2
 from PIL import Image
 import settings
 import model_inference
-import torch
-import torchcrf
-from torchcrf import CRF
-from skimage.util import img_as_float
 import segmentation_postprocessing_library as seg_post_proc
 
 
