@@ -13,6 +13,30 @@ import model_inference
 import mask_postprocessing
 
 
+def get_rtmp_frames(url):
+    """
+    Establishes a connection to the drone's RTMP stream using FFmpeg.
+
+    Args:
+        url (str): The URL of the RTMP stream to connect to.
+
+    Returns:
+        process (subprocess.Popen): The FFmpeg subprocess object.
+
+    """
+    print(f'Initiated FFmpeg process at time {time.ctime()}')
+    # Set up FFmpeg process
+    process = (
+        ffmpeg
+        .input(url, an=None)  # Disable audio
+        .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
+        .global_args('-c:v', 'libx264')
+        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
+    )
+    print(f'FFmpeg process connected at time {time.ctime()}')
+    return process
+
+
 def livestream_executive(url):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
@@ -109,7 +133,7 @@ def livestream_executive(url):
     cv2.destroyAllWindows()
 
 
-def livestream_executive_ui(url, app):
+def livestream_executive_ui(app):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
     applies a segmentation model to the frames, and displays both the original
@@ -122,17 +146,9 @@ def livestream_executive_ui(url, app):
     Returns:
         None
     """
-    print(f'Initiated FFmpeg process at time {time.ctime()}')
-    # Set up FFmpeg process
-    process = (
-        ffmpeg
-        .input(url, an=None)  # Disable audio
-        .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
-        .global_args('-c:v', 'libx264')
-        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
-    )
+
+    process = get_rtmp_frames(settings.RTMP_URL)
     app.process = process
-    print(f'FFmpeg process connected at time {time.ctime()}')
 
     frame_size = settings.FRAME_WIDTH * settings.FRAME_HEIGHT * settings.NUM_CHANNELS
 
@@ -152,8 +168,8 @@ def livestream_executive_ui(url, app):
         if settings.MODEL_ON:
 
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
-            segmentation_results_rgb = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
-
+            segmentation_results_rgb = model_inference.image_to_tensor(Image.fromarray(in_frame),
+                                                                       settings.MODEL, settings.DEVICE).astype(np.uint8)
             segmentation_results = segmentation_results_rgb
 
             _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(in_frame, segmentation_results)

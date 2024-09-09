@@ -1,4 +1,6 @@
-
+"""
+Main script for the livestream application.
+"""
 import time
 import cProfile
 import pstats
