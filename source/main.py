@@ -1,11 +1,12 @@
-import stream_processing
-import settings
-import user_interface
 
 import time
 import cProfile
 import pstats
 import tkinter as tk
+
+import settings
+import stream_processing
+import user_interface
 
 def stop_stream_callback():
     # Logic to stop the FFmpeg process or any other cleanup
