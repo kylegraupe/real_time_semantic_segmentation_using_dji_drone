@@ -85,8 +85,6 @@ def apply_crf(in_frame):
     # Process the frame through your model
     segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL,
                                                               settings.DEVICE).astype(np.uint8)
-    # segmented_frame_img_rgb = settings.COLOR_MAP[segmented_frame_np_gray]
-    # segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
 
     # Resize original frame to match segmented frame
     in_frame_resized = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
