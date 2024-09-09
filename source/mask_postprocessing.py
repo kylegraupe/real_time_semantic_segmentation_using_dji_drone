@@ -9,6 +9,7 @@ from pydensecrf.utils import unary_from_labels, create_pairwise_bilateral, creat
 
 import model_inference
 import settings
+import ui_input_variables
 
 
 def ensure_rgb(segmentation_mask):
@@ -109,19 +110,20 @@ def apply_crf(original_image, segmentation_mask):
     return mapped_inference_labels
 
 def apply_mask_postprocessing(raw, mask_rgb_np):
-    if settings.CRF_ON:
+    mask = mask_rgb_np
+    if ui_input_variables.CRF_ON:
         mask = apply_crf(raw, mask_rgb_np)
 
-    if settings.EROSION_ON:
+    if ui_input_variables.EROSION_ON:
         mask = apply_erosion(mask)
 
-    if settings.DILATION_ON:
+    if ui_input_variables.DILATION_ON:
         mask = apply_erosion(mask)
 
-    if settings.GAUSSIAN_SMOOTHING_ON:
+    if ui_input_variables.GAUSSIAN_SMOOTHING_ON:
         mask = apply_gaussian_smoothing(mask)
 
-    if settings.MEDIAN_FILTERING_ON:
+    if ui_input_variables.MEDIAN_FILTERING_ON:
         mask = apply_median_filtering(mask)
 
     else:

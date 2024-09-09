@@ -11,30 +11,31 @@ from PIL import Image
 import settings
 import model_inference
 import mask_postprocessing
+import ui_input_variables
 
 
-def get_rtmp_frames(url):
-    """
-    Establishes a connection to the drone's RTMP stream using FFmpeg.
-
-    Args:
-        url (str): The URL of the RTMP stream to connect to.
-
-    Returns:
-        process (subprocess.Popen): The FFmpeg subprocess object.
-
-    """
-    print(f'Initiated FFmpeg process at time {time.ctime()}')
-    # Set up FFmpeg process
-    process = (
-        ffmpeg
-        .input(url, an=None)  # Disable audio
-        .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
-        .global_args('-c:v', 'libx264')
-        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
-    )
-    print(f'FFmpeg process connected at time {time.ctime()}')
-    return process
+# def get_rtmp_frames(url):
+#     """
+#     Establishes a connection to the drone's RTMP stream using FFmpeg.
+#
+#     Args:
+#         url (str): The URL of the RTMP stream to connect to.
+#
+#     Returns:
+#         process (subprocess.Popen): The FFmpeg subprocess object.
+#
+#     """
+#     print(f'Initiated FFmpeg process at time {time.ctime()}')
+#     # Set up FFmpeg process
+#     process = (
+#         ffmpeg
+#         .input(url, an=None)  # Disable audio
+#         .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
+#         .global_args('-c:v', 'libx264')
+#         .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
+#     )
+#     print(f'FFmpeg process connected at time {time.ctime()}')
+#     return process
 
 
 def livestream_executive(url):
@@ -133,7 +134,7 @@ def livestream_executive(url):
     cv2.destroyAllWindows()
 
 
-def livestream_executive_ui(app):
+def livestream_executive_ui(url, app):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
     applies a segmentation model to the frames, and displays both the original
@@ -147,7 +148,19 @@ def livestream_executive_ui(app):
         None
     """
 
-    process = get_rtmp_frames(settings.RTMP_URL)
+    # process = get_rtmp_frames(settings.RTMP_URL)
+
+    print(f'Initiated FFmpeg process at time {time.ctime()}')
+    # Set up FFmpeg process
+    process = (
+        ffmpeg
+        .input(url, an=None)  # Disable audio
+        .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{ui_input_variables.OUTPUT_FPS}')
+        .global_args('-c:v', 'libx264')
+        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
+    )
+    print(f'FFmpeg process connected at time {time.ctime()}')
+
     app.process = process
 
     frame_size = settings.FRAME_WIDTH * settings.FRAME_HEIGHT * settings.NUM_CHANNELS
@@ -175,7 +188,7 @@ def livestream_executive_ui(app):
             _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(in_frame, segmentation_results)
 
             if settings.SIDE_BY_SIDE:
-                output_frame = np.hstack((in_frame.astype(np.uint8), segmentation_results.astype(np.uint8)))
+                output_frame = np.vstack((in_frame.astype(np.uint8), segmentation_results.astype(np.uint8)))
             else:
                 output_frame = segmentation_results
         else:

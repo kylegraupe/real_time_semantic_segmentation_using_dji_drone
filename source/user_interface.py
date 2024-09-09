@@ -15,6 +15,7 @@ from PIL import Image, ImageTk
 import threading
 import settings
 import cv2
+import ui_input_variables
 
 
 class StreamApp:
@@ -52,7 +53,6 @@ class StreamApp:
         self.root.configure(bg=self.bg_color)
 
         # Load and display the logo
-        self.load_logo()
 
         # Create the sidebar frame
         self.sidebar_frame = tk.Frame(self.root, bg=self.bg_color, width=200, padx=10, pady=10)
@@ -64,21 +64,23 @@ class StreamApp:
 
         # Create the button frame
         self.button_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
-        self.button_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+        self.button_frame.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
 
         # Create the video display frame
         self.video_frame = tk.Frame(self.root, bg=self.video_label_bg, bd=2, relief="raised")
-        self.video_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        self.video_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
 
         # Create the stream characteristics frame
         self.stream_char_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
-        self.stream_char_frame.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        self.stream_char_frame.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
 
         # Create the grid layout
         self.create_input_settings()
         self.create_buttons()
         self.create_video_display()
         self.create_stream_characteristics()
+        self.load_logo()
+
 
         # Configure grid weights
         self.root.grid_rowconfigure(0, weight=1)
@@ -88,12 +90,11 @@ class StreamApp:
         self.root.grid_columnconfigure(1, weight=1)
 
     def load_logo(self):
-        # Load and display the logo
         """
         Load and display the logo.
 
         This function loads the logo image and displays it in the user interface.
-        The image is resized to 250x150 pixels and placed on the sidebar frame.
+        The image is resized to 250x150 pixels and placed in the third row, first column of the UI layout.
         The logo is displayed with a solid border and margin of 20 pixels.
 
         Parameters
@@ -112,8 +113,8 @@ class StreamApp:
         # Create a label for the logo
         self.logo_label = tk.Label(self.root, image=self.logo_imgtk, bg=self.bg_color, bd=2, relief="solid")
 
-        # Position the logo with margins
-        self.logo_label.grid(row=2, column=0, padx=20, pady=20)  # Margin of 20 pixels from the left and bottom
+        # Position the logo in the third row, first column
+        self.logo_label.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")  # Margin of 20 pixels
 
     def create_input_settings(self):
         """
@@ -123,9 +124,7 @@ class StreamApp:
         and the second column displaying the parameter values. The parameter values are displayed as
         Entry widgets. The user can edit the parameter values by typing into the Entry widgets.
 
-        The parameters that are currently displayed are:
-
-        - Output FPS: The output FPS of the livestream.
+        Additionally, this frame includes toggle buttons for enabling or disabling post-processing methods.
 
         Parameters
         ----------
@@ -135,13 +134,128 @@ class StreamApp:
         -------
         None
         """
-        tk.Label(self.input_frame, text="Output FPS:", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w")
+        # Title for the input settings frame
+        tk.Label(self.input_frame, text="Input Settings", bg=self.bg_color, fg=self.fg_color,
+                 font=("Arial", 16, "bold")).grid(row=0, column=0, columnspan=2, pady=10)
+
+        # Output FPS setting
+        tk.Label(self.input_frame, text="Output FPS:", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0,
+                                                                                                sticky="w")
         self.output_fps_entry = tk.Entry(self.input_frame, bg=self.entry_bg_color, fg=self.entry_fg_color)
         self.output_fps_entry.insert(0, str(settings.OUTPUT_FPS))
-        self.output_fps_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        self.output_fps_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
-        # Add more inputs as needed
-        # ...
+        # Toggle buttons for post-processing methods
+        tk.Label(self.input_frame, text="Post-Processing Methods", bg=self.bg_color, fg=self.fg_color,
+                 font=("Arial", 14)).grid(row=2, column=0, columnspan=2, pady=10)
+
+        # CRF Toggle Button
+        self.crf_var = tk.BooleanVar(value=ui_input_variables.CRF_ON)
+        self.crf_toggle = tk.Checkbutton(self.input_frame, text="Enable CRF", variable=self.crf_var, bg=self.bg_color,
+                                         fg=self.fg_color, command=self.toggle_crf)
+        self.crf_toggle.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        # Erosion Toggle Button
+        self.erosion_var = tk.BooleanVar(value=ui_input_variables.EROSION_ON)
+        self.erosion_toggle = tk.Checkbutton(self.input_frame, text="Enable Erosion", variable=self.erosion_var,
+                                             bg=self.bg_color, fg=self.fg_color, command=self.toggle_erosion)
+        self.erosion_toggle.grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        # Dilation Toggle Button
+        self.dilation_var = tk.BooleanVar(value=ui_input_variables.DILATION_ON)
+        self.dilation_toggle = tk.Checkbutton(self.input_frame, text="Enable Dilation", variable=self.dilation_var,
+                                              bg=self.bg_color, fg=self.fg_color, command=self.toggle_dilation)
+        self.dilation_toggle.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        # Gaussian Smoothing Toggle Button
+        self.gaussian_smoothing_var = tk.BooleanVar(value=ui_input_variables.GAUSSIAN_SMOOTHING_ON)
+        self.gaussian_smoothing_toggle = tk.Checkbutton(self.input_frame, text="Enable Gaussian Smoothing",
+                                                        variable=self.gaussian_smoothing_var, bg=self.bg_color,
+                                                        fg=self.fg_color, command=self.toggle_gaussian_smoothing)
+        self.gaussian_smoothing_toggle.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+    def update_stream_characteristics(self):
+        """
+        Updates the stream characteristics frame to reflect the current state of the post-processing methods.
+        """
+        pos_highlight_color = "medium sea green"
+        neg_highlight_color = "indian red"
+
+        # Update the post-processing section of the stream characteristics frame
+        for widget in self.stream_char_frame.winfo_children():
+            widget.destroy()  # Clear the existing labels
+
+        # Recreate the labels with updated colors
+        frame_titles_fg = 'black'
+        frame_titles_bg = 'light slate gray'
+
+        # Stream characteristics
+        tk.Label(self.stream_char_frame, text="STREAM CHARACTERISTICS:", underline=True, bg=frame_titles_bg,
+                 fg=frame_titles_fg).grid(row=0, column=0, sticky="w")
+        tk.Label(self.stream_char_frame,
+                 text=f"- Resolution: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}", bg='bisque4',
+                 fg=self.fg_color).grid(row=1, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Listening Port: {str(settings.LISTENING_PORT)}", bg='bisque4',
+                 fg=self.fg_color).grid(row=2, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Input FPS: {str(settings.INPUT_FPS)}", bg='bisque4',
+                 fg=self.fg_color).grid(row=3, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Output FPS: {str(settings.OUTPUT_FPS)}", bg='bisque4',
+                 fg=self.fg_color).grid(row=4, column=0, sticky="w")
+
+        # Model characteristics
+        tk.Label(self.stream_char_frame, text="MODEL CHARACTERISTICS:", underline=True, bg=frame_titles_bg,
+                 fg=frame_titles_fg).grid(row=5, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Encoder: {str(settings.MODEL_ENCODER_NAME)}", bg='bisque4',
+                 fg=self.fg_color).grid(row=6, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Decoder: {str(settings.MODEL_DECODER_NAME)}", bg='bisque4',
+                 fg=self.fg_color).grid(row=7, column=0, sticky="w")
+
+        # RGB Mask Post-Processing
+        tk.Label(self.stream_char_frame, text="RGB MASK POST-PROCESSING:", underline=True, bg=frame_titles_bg,
+                 fg=frame_titles_fg).grid(row=8, column=0, sticky="w")
+
+        # Post Processing
+        dilation_bg = pos_highlight_color if ui_input_variables.DILATION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Dilation: {str(ui_input_variables.DILATION_ON).upper()}",
+                 bg=dilation_bg, fg=self.fg_color).grid(row=9, column=0, sticky="w")
+
+        erosion_bg = pos_highlight_color if ui_input_variables.EROSION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Erosion: {str(ui_input_variables.EROSION_ON).upper()}", bg=erosion_bg,
+                 fg=self.fg_color).grid(row=10, column=0, sticky="w")
+
+        median_blur_bg = pos_highlight_color if ui_input_variables.MEDIAN_FILTERING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Median Blur: {str(ui_input_variables.MEDIAN_FILTERING_ON).upper()}",
+                 bg=median_blur_bg, fg=self.fg_color).grid(row=11, column=0, sticky="w")
+
+        gaussian_blur_bg = pos_highlight_color if ui_input_variables.GAUSSIAN_SMOOTHING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame,
+                 text=f"- Gaussian Blur: {str(ui_input_variables.GAUSSIAN_SMOOTHING_ON).upper()}", bg=gaussian_blur_bg,
+                 fg=self.fg_color).grid(row=12, column=0, sticky="w")
+
+        crf_bg = pos_highlight_color if ui_input_variables.CRF_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Conditional Random Field: {str(ui_input_variables.CRF_ON).upper()}",
+                 bg=crf_bg, fg=self.fg_color).grid(row=13, column=0, sticky="w")
+
+    def toggle_crf(self):
+
+        ui_input_variables.CRF_ON = self.crf_var.get()
+        print(f"CRF set to {ui_input_variables.CRF_ON}")
+        self.update_stream_characteristics()
+
+    def toggle_erosion(self):
+        ui_input_variables.EROSION_ON = self.erosion_var.get()
+        print(f"Erosion set to {ui_input_variables.EROSION_ON}")
+        self.update_stream_characteristics()
+
+    def toggle_dilation(self):
+        ui_input_variables.DILATION_ON = self.dilation_var.get()
+        print(f"Dilation set to {ui_input_variables.DILATION_ON}")
+        self.update_stream_characteristics()
+
+    def toggle_gaussian_smoothing(self):
+        ui_input_variables.GAUSSIAN_SMOOTHING_ON = self.gaussian_smoothing_var.get()
+        print(f"Gaussian Smoothing set to {ui_input_variables.GAUSSIAN_SMOOTHING_ON}")
+        self.update_stream_characteristics()
 
     def create_buttons(self):
         # Set the button width to be slightly less than the frame width
@@ -177,10 +291,10 @@ class StreamApp:
         self.stop_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
 
         # Close App button
-        self.close_button = tk.Button(self.button_frame, text="Close App", command=self.exit_and_close,
-                                      bg=self.button_color, fg=self.button_text_color, bd=1, relief="raised",
-                                      width=button_width)
-        self.close_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
+        # self.close_button = tk.Button(self.button_frame, text="Close App", command=self.exit_and_close,
+        #                               bg=self.button_color, fg=self.button_text_color, bd=1, relief="raised",
+        #                               width=button_width)
+        # self.close_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")  # Use sticky="ew" to center
 
     def create_video_display(self):
         # Video display label (for the video frame)
@@ -267,45 +381,45 @@ class StreamApp:
                  bg='bisque4', fg=self.fg_color).grid(row=4, column=0, sticky="w")
 
         # Model characteristics
-        tk.Label(self.stream_char_frame, text="MODEL CHARACTERISTICS:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=0,
-                                                                                                                  column=1,
+        tk.Label(self.stream_char_frame, text="MODEL CHARACTERISTICS:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=5,
+                                                                                                                  column=0,
                                                                                                                   sticky="w")
         tk.Label(self.stream_char_frame, text=f"- Encoder: {str(settings.MODEL_ENCODER_NAME)}",
-                 bg='bisque4', fg=self.fg_color).grid(row=1, column=1, sticky="w")
+                 bg='bisque4', fg=self.fg_color).grid(row=6, column=0, sticky="w")
 
         tk.Label(self.stream_char_frame, text=f"- Decoder: {str(settings.MODEL_DECODER_NAME)}",
-                 bg='bisque4', fg=self.fg_color).grid(row=2, column=1, sticky="w")
+                 bg='bisque4', fg=self.fg_color).grid(row=7, column=0, sticky="w")
 
-        tk.Label(self.stream_char_frame, text="RGB MASK POST-PROCESSING:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=0,
-                                                                                                                  column=2, sticky="w")
+        tk.Label(self.stream_char_frame, text="RGB MASK POST-PROCESSING:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=8,
+                                                                                                                  column=0, sticky="w")
 
         # Post Processing
         pos_highlight_color = "medium sea green"
         neg_highlight_color = "indian red"
         # Dilation
-        dilation_bg = pos_highlight_color if settings.DILATION_ON else neg_highlight_color
-        tk.Label(self.stream_char_frame, text=f"- Dilation: {str(settings.DILATION_ON).upper()}",
-                 bg=dilation_bg, fg=self.fg_color).grid(row=1, column=2, sticky="w")
+        dilation_bg = pos_highlight_color if ui_input_variables.DILATION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Dilation: {str(ui_input_variables.DILATION_ON).upper()}",
+                 bg=dilation_bg, fg=self.fg_color).grid(row=9, column=0, sticky="w")
 
         # Erosion
-        erosion_bg = pos_highlight_color if settings.EROSION_ON else neg_highlight_color
-        tk.Label(self.stream_char_frame, text=f"- Erosion: {str(settings.EROSION_ON).upper()}",
-                 bg=erosion_bg, fg=self.fg_color).grid(row=2, column=2, sticky="w")
+        erosion_bg = pos_highlight_color if ui_input_variables.EROSION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Erosion: {str(ui_input_variables.EROSION_ON).upper()}",
+                 bg=erosion_bg, fg=self.fg_color).grid(row=10, column=0, sticky="w")
 
         # Median Blur
-        median_blur_bg = pos_highlight_color if settings.MEDIAN_FILTERING_ON else neg_highlight_color
-        tk.Label(self.stream_char_frame, text=f"- Median Blur: {str(settings.MEDIAN_FILTERING_ON).upper()}",
-                 bg=median_blur_bg, fg=self.fg_color).grid(row=3, column=2, sticky="w")
+        median_blur_bg = pos_highlight_color if ui_input_variables.MEDIAN_FILTERING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Median Blur: {str(ui_input_variables.MEDIAN_FILTERING_ON).upper()}",
+                 bg=median_blur_bg, fg=self.fg_color).grid(row=11, column=0, sticky="w")
 
         # Gaussian Blur
-        gaussian_blur_bg = pos_highlight_color if settings.GAUSSIAN_SMOOTHING_ON else neg_highlight_color
-        tk.Label(self.stream_char_frame, text=f"- Gaussian Blur: {str(settings.GAUSSIAN_SMOOTHING_ON).upper()}",
-                 bg=gaussian_blur_bg, fg=self.fg_color).grid(row=4, column=2, sticky="w")
+        gaussian_blur_bg = pos_highlight_color if ui_input_variables.GAUSSIAN_SMOOTHING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Gaussian Blur: {str(ui_input_variables.GAUSSIAN_SMOOTHING_ON).upper()}",
+                 bg=gaussian_blur_bg, fg=self.fg_color).grid(row=12, column=0, sticky="w")
 
         # Conditional Random Field (CRF)
-        crf_bg = pos_highlight_color if settings.CRF_ON else neg_highlight_color
-        tk.Label(self.stream_char_frame, text=f"- Conditional Random Field: {str(settings.CRF_ON).upper()}",
-                 bg=crf_bg, fg=self.fg_color).grid(row=5, column=2, sticky="w")
+        crf_bg = pos_highlight_color if ui_input_variables.CRF_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Conditional Random Field: {str(ui_input_variables.CRF_ON).upper()}",
+                 bg=crf_bg, fg=self.fg_color).grid(row=13, column=0, sticky="w")
 
     def stop_stream(self):
         # Stop the stream

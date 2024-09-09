@@ -38,7 +38,6 @@ def load_segmentation_model(model_path):
     return model, device  # Return the device as well
 
 
-
 def image_to_tensor(img, trained_model, device):
     """
     Converts an input image to a tensor and makes a prediction using a trained model.
