@@ -123,10 +123,10 @@ def livestream_executive_ui(url, app):
     # Set up FFmpeg process
     process = (
         ffmpeg
-        .input(url, an=None)  # Audio Disabled in second parameter.
+        .input(url, an=None)  # Disable audio
         .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
-        .global_args('-c:v', 'libx264')  # Use VideoToolbox for encoding
-        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR, pipe_stdin=True)
+        .global_args('-c:v', 'libx264')
+        .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
     )
     app.process = process
     print(f'FFmpeg process connected at time {time.ctime()}')
@@ -152,12 +152,11 @@ def livestream_executive_ui(url, app):
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
             segmentation_results = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
 
+            # if settings.SMALL_ITEM_FILTER_ON:
+            #     segmentation_results = seg_post_proc.apply_conn(segmentation_results)
 
-            if settings.SMALL_ITEM_FILTER_ON:
-                segmentation_results = seg_post_proc.apply_conn(segmentation_results)
-
-            if settings.CRF_ON:
-                in_frame, segmentation_results = seg_post_proc.apply_crf(in_frame)
+            # if settings.CRF_ON:
+            #     in_frame, segmentation_results = seg_post_proc.apply_crf(segmentation_results)
 
             if settings.EROSION_ON:
                 segmentation_results = seg_post_proc.apply_erosion(segmentation_results)
@@ -208,7 +207,7 @@ def livestream_executive_ui(url, app):
                 new_width = int(display_height * aspect_ratio)
 
             # Resize the frame
-            output_frame = cv2.resize(output_frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
+            output_frame = cv2.resize(output_frame, (new_width, new_height), interpolation=cv2.INTER_NEAREST)
 
         # Update the UI with the processed frame
         app.update_video_display(output_frame)

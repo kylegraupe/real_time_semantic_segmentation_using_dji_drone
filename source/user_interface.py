@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import threading
 import settings
+import cv2
 
 
 class StreamApp:
@@ -19,9 +20,10 @@ class StreamApp:
         self.root.title("RTMP Stream GUI")
         self.start_stream_callback = start_stream_callback
         self.stop_stream_callback = stop_stream_callback
-        self.stream_thread = None
+        # self.stream_thread = None
         self.is_streaming = False
         self.process = None
+
 
         # Set initial window size to the screen's resolution
         self.root.geometry(f"{self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}+0+0")
@@ -178,22 +180,29 @@ class StreamApp:
 
     def stop_stream(self):
         # Stop the stream
-        if self.is_streaming:
-            self.is_streaming = False
-            if self.process:
-                self.process.stdin.close()  # Close the input pipe
-                self.process.terminate()    # Terminate the FFmpeg process
-                self.process.wait()         # Wait for the process to exit
-                self.process = None
-            self.stream_thread.join()     # Wait for the stream thread to exit
-            self.stop_button.config(state=tk.DISABLED)
+        return None
+        # if self.is_streaming:
+        #     self.is_streaming = False
+        #     if self.process:
+        #         self.process.stdin.close()  # Close the input pipe
+        #         self.process.terminate()    # Terminate the FFmpeg process
+        #         self.process.wait()         # Wait for the process to exit
+        #         self.process = None
+        #     self.stream_thread.join()     # Wait for the stream thread to exit
+        #     self.stop_button.config(state=tk.DISABLED)
 
     def update_video_display(self, output_frame):
+        # Convert BGR to RGB (if you're using OpenCV)
+        output_frame_rgb = cv2.cvtColor(output_frame, cv2.COLOR_BGR2RGB)
+
         # Convert to ImageTk format
-        img = Image.fromarray(output_frame)
+        img = Image.fromarray(output_frame_rgb)
         imgtk = ImageTk.PhotoImage(image=img)
 
         # Update the video display
+        self.root.after(0, self._update_image, imgtk)
+
+    def _update_image(self, imgtk):
         self.video_label.imgtk = imgtk
         self.video_label.configure(image=imgtk)
 
