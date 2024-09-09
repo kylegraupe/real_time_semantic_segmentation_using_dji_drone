@@ -52,12 +52,14 @@ def livestream_executive(url):
 
         # Convert the byte array to a numpy array representing the frame
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
+        segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL,
+                                                                  settings.DEVICE).astype(np.uint8)
 
         if settings.MODEL_ON:
 
             # Define the CRF layer with the number of classes
             if settings.CRF_ON:
-                in_frame, segmentation_results = seg_post_proc.apply_crf(in_frame)
+                segmentation_results = seg_post_proc.apply_crf(in_frame, segmented_frame_np_gray)
 
             else:
                 # Apply segmentation model to the frame
@@ -150,13 +152,15 @@ def livestream_executive_ui(url, app):
         if settings.MODEL_ON:
 
             in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
-            segmentation_results = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
+            segmentation_results_rgb = model_inference.image_to_tensor(Image.fromarray(in_frame), settings.MODEL, settings.DEVICE).astype(np.uint8)
 
             # if settings.SMALL_ITEM_FILTER_ON:
             #     segmentation_results = seg_post_proc.apply_conn(segmentation_results)
 
-            # if settings.CRF_ON:
-            #     in_frame, segmentation_results = seg_post_proc.apply_crf(segmentation_results)
+            segmentation_results = segmentation_results_rgb
+
+            if settings.CRF_ON:
+                segmentation_results = seg_post_proc.apply_crf(in_frame, segmentation_results_rgb)
 
             if settings.EROSION_ON:
                 segmentation_results = seg_post_proc.apply_erosion(segmentation_results)
@@ -171,8 +175,7 @@ def livestream_executive_ui(url, app):
                 segmentation_results = seg_post_proc.apply_median_filtering(segmentation_results)
 
 
-            # if settings.ACTIVE_CONTOURS_ON:
-            #     segmentation_results = seg_post_proc.apply_active_contours(segmentation_results)
+                # print(f'CRF applied at time {time.ctime()}')
 
             else:
                 # Apply segmentation model to the frame
@@ -183,6 +186,9 @@ def livestream_executive_ui(url, app):
                 # Resize original frame to match segmented frame
                 in_frame = cv2.resize(in_frame, (1280, 704), interpolation=cv2.INTER_NEAREST)
                 segmentation_results = segmented_frame_np_rgb
+
+            print(f'Segmentation results shape: {segmentation_results.shape} at time {time.ctime()}')  # Print the shape of the
+            print(f'In frame: {in_frame.shape}')
 
             if settings.SIDE_BY_SIDE:
                 # Stack the original and segmented frames horizontally

@@ -138,45 +138,66 @@ class StreamApp:
             self.stream_thread.start()
 
     def create_stream_characteristics(self):
+        frame_titles_fg = 'black'
+        frame_titles_bg = 'light slate gray'
         # Stream characteristics (e.g., resolution, bitrate)
-        tk.Label(self.stream_char_frame, text="Stream Characteristics:", underline=True, bg=self.bg_color, fg=self.fg_color).grid(row=0,
+        tk.Label(self.stream_char_frame, text="STREAM CHARACTERISTICS:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=0,
                                                                                                                   column=0,
                                                                                                                   sticky="w")
 
         # Add stream characteristics labels and values
-        tk.Label(self.stream_char_frame, text=f"Resolution: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}"
-                 , bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Resolution: {settings.RESIZE_FRAME_WIDTH}x{settings.RESIZE_FRAME_HEIGHT}"
+                 , bg='bisque4', fg=self.fg_color).grid(row=1, column=0, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Listening Port: {str(settings.LISTENING_PORT)}", bg=self.bg_color, fg=self.fg_color).grid(row=2,
+        tk.Label(self.stream_char_frame, text=f"- Listening Port: {str(settings.LISTENING_PORT)}", bg='bisque4', fg=self.fg_color).grid(row=2,
                                                                                                              column=0,
                                                                                                              sticky="w")
-        tk.Label(self.stream_char_frame, text=f"Input FPS: {str(settings.INPUT_FPS)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Input FPS: {str(settings.INPUT_FPS)}",
+                 bg='bisque4', fg=self.fg_color).grid(row=3, column=0, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Output FPS: {str(settings.OUTPUT_FPS)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=0, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Output FPS: {str(settings.OUTPUT_FPS)}",
+                 bg='bisque4', fg=self.fg_color).grid(row=4, column=0, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Model Encoder: {str(settings.MODEL_ENCODER_NAME)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=1, sticky="w")
-
-        tk.Label(self.stream_char_frame, text=f"Model Decoder: {str(settings.MODEL_DECODER_NAME)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=1, sticky="w")
-
-        tk.Label(self.stream_char_frame, text="RGB Mask Post-Processing:", underline=True, bg=self.bg_color, fg=self.fg_color).grid(row=0,
-                                                                                                                  column=2,
+        # Model characteristics
+        tk.Label(self.stream_char_frame, text="MODEL CHARACTERISTICS:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=0,
+                                                                                                                  column=1,
                                                                                                                   sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Model Encoder: {str(settings.MODEL_ENCODER_NAME)}",
+                 bg='bisque4', fg=self.fg_color).grid(row=1, column=1, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Dilation: {str(settings.DILATION_ON)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=1, column=2, sticky="w")
+        tk.Label(self.stream_char_frame, text=f"- Model Decoder: {str(settings.MODEL_DECODER_NAME)}",
+                 bg='bisque4', fg=self.fg_color).grid(row=2, column=1, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Erosion: {str(settings.EROSION_ON)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=2, column=2, sticky="w")
+        tk.Label(self.stream_char_frame, text="RGB MASK POST-PROCESSING:", underline=True, bg=frame_titles_bg, fg=frame_titles_fg).grid(row=0,
+                                                                                                                  column=2, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Median Blur: {str(settings.MEDIAN_FILTERING_ON)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=3, column=2, sticky="w")
+        # Post Processing
+        pos_highlight_color = "spring green"
+        neg_highlight_color = "orange red"
+        # Dilation
+        dilation_bg = pos_highlight_color if settings.DILATION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Dilation: {str(settings.DILATION_ON)}",
+                 bg=dilation_bg, fg=self.fg_color).grid(row=1, column=2, sticky="w")
 
-        tk.Label(self.stream_char_frame, text=f"Gaussian Blur: {str(settings.GAUSSIAN_SMOOTHING_ON)}",
-                 bg=self.bg_color, fg=self.fg_color).grid(row=4, column=2, sticky="w")
+        # Erosion
+        erosion_bg = pos_highlight_color if settings.EROSION_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Erosion: {str(settings.EROSION_ON)}",
+                 bg=erosion_bg, fg=self.fg_color).grid(row=2, column=2, sticky="w")
+
+        # Median Blur
+        median_blur_bg = pos_highlight_color if settings.MEDIAN_FILTERING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Median Blur: {str(settings.MEDIAN_FILTERING_ON)}",
+                 bg=median_blur_bg, fg=self.fg_color).grid(row=3, column=2, sticky="w")
+
+        # Gaussian Blur
+        gaussian_blur_bg = pos_highlight_color if settings.GAUSSIAN_SMOOTHING_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Gaussian Blur: {str(settings.GAUSSIAN_SMOOTHING_ON)}",
+                 bg=gaussian_blur_bg, fg=self.fg_color).grid(row=4, column=2, sticky="w")
+
+        # Conditional Random Field (CRF)
+        crf_bg = pos_highlight_color if settings.CRF_ON else neg_highlight_color
+        tk.Label(self.stream_char_frame, text=f"- Conditional Random Field: {str(settings.CRF_ON)}",
+                 bg=crf_bg, fg=self.fg_color).grid(row=5, column=2, sticky="w")
 
     def stop_stream(self):
         # Stop the stream
