@@ -2,11 +2,9 @@
 This file contains the settings and global variables for the application.
 """
 
-# public libraries
 import numpy as np
 import cv2
 
-# imports from source
 import model_inference
 
 # Application Environment
