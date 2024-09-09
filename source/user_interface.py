@@ -68,7 +68,7 @@ class StreamApp:
 
         # Create the video display frame
         self.video_frame = tk.Frame(self.root, bg=self.video_label_bg, bd=2, relief="raised")
-        self.video_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
+        self.video_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         # Create the stream characteristics frame
         self.stream_char_frame = tk.Frame(self.root, bg=self.bg_color, bd=2, relief="raised")
@@ -151,9 +151,10 @@ class StreamApp:
 
         # CRF Toggle Button
         self.crf_var = tk.BooleanVar(value=ui_input_variables.CRF_ON)
-        self.crf_toggle = tk.Checkbutton(self.input_frame, text="Enable CRF", variable=self.crf_var, bg=self.bg_color,
+        self.crf_toggle = tk.Checkbutton(self.input_frame, text="Enable Conditional Random Field",
+                                         variable=self.crf_var, bg=self.bg_color,
                                          fg=self.fg_color, command=self.toggle_crf)
-        self.crf_toggle.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.crf_toggle.grid(row=7, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
         # Erosion Toggle Button
         self.erosion_var = tk.BooleanVar(value=ui_input_variables.EROSION_ON)
@@ -165,7 +166,7 @@ class StreamApp:
         self.dilation_var = tk.BooleanVar(value=ui_input_variables.DILATION_ON)
         self.dilation_toggle = tk.Checkbutton(self.input_frame, text="Enable Dilation", variable=self.dilation_var,
                                               bg=self.bg_color, fg=self.fg_color, command=self.toggle_dilation)
-        self.dilation_toggle.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.dilation_toggle.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
         # Gaussian Smoothing Toggle Button
         self.gaussian_smoothing_var = tk.BooleanVar(value=ui_input_variables.GAUSSIAN_SMOOTHING_ON)
@@ -173,6 +174,14 @@ class StreamApp:
                                                         variable=self.gaussian_smoothing_var, bg=self.bg_color,
                                                         fg=self.fg_color, command=self.toggle_gaussian_smoothing)
         self.gaussian_smoothing_toggle.grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        # Gaussian Smoothing Toggle Button
+        self.median_smoothing_var = tk.BooleanVar(value=ui_input_variables.MEDIAN_FILTERING_ON)
+        self.median_smoothing_toggle = tk.Checkbutton(self.input_frame, text="Enable Median Smoothing",
+                                                      variable=self.median_smoothing_var, bg=self.bg_color,
+                                                      fg=self.fg_color, command=self.toggle_median_smoothing)
+
+        self.median_smoothing_toggle.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
     def update_stream_characteristics(self):
         """
@@ -255,6 +264,11 @@ class StreamApp:
     def toggle_gaussian_smoothing(self):
         ui_input_variables.GAUSSIAN_SMOOTHING_ON = self.gaussian_smoothing_var.get()
         print(f"Gaussian Smoothing set to {ui_input_variables.GAUSSIAN_SMOOTHING_ON}")
+        self.update_stream_characteristics()
+
+    def toggle_median_smoothing(self):
+        ui_input_variables.MEDIAN_FILTERING_ON = self.median_smoothing_var.get()
+        print(f"Gaussian Smoothing set to {ui_input_variables.MEDIAN_FILTERING_ON}")
         self.update_stream_characteristics()
 
     def create_buttons(self):
