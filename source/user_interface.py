@@ -37,7 +37,6 @@ class StreamApp:
         self.is_streaming = False
         self.process = None
 
-
         # Set initial window size to the screen's resolution
         self.root.geometry(f"{self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}+0+0")
 
@@ -48,11 +47,8 @@ class StreamApp:
         self.root.bind('<F11>', self.toggle_fullscreen)
         self.root.bind('<Escape>', self.exit_fullscreen)
 
-
         # Apply the background color to the window
         self.root.configure(bg=self.bg_color)
-
-        # Load and display the logo
 
         # Create the sidebar frame
         self.sidebar_frame = tk.Frame(self.root, bg=self.bg_color, width=200, padx=10, pady=10)
@@ -80,7 +76,6 @@ class StreamApp:
         self.create_video_display()
         self.create_stream_characteristics()
         self.load_logo()
-
 
         # Configure grid weights
         self.root.grid_rowconfigure(0, weight=1)

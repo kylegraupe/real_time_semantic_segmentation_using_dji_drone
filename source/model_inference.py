@@ -4,7 +4,6 @@ This script contains the code for the model inference.
 Video frames are passed to the model and the predicted RGB mask is returned.
 """
 
-# public libraries
 from torchvision import transforms
 import torch
 import time

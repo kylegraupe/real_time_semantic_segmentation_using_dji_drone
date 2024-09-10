@@ -14,30 +14,6 @@ import mask_postprocessing
 import ui_input_variables
 
 
-# def get_rtmp_frames(url):
-#     """
-#     Establishes a connection to the drone's RTMP stream using FFmpeg.
-#
-#     Args:
-#         url (str): The URL of the RTMP stream to connect to.
-#
-#     Returns:
-#         process (subprocess.Popen): The FFmpeg subprocess object.
-#
-#     """
-#     print(f'Initiated FFmpeg process at time {time.ctime()}')
-#     # Set up FFmpeg process
-#     process = (
-#         ffmpeg
-#         .input(url, an=None)  # Disable audio
-#         .output('pipe:', format='rawvideo', pix_fmt='bgr24', r=f'{settings.OUTPUT_FPS}')
-#         .global_args('-c:v', 'libx264')
-#         .run_async(pipe_stdout=settings.PIPE_STDOUT, pipe_stderr=settings.PIPE_STDERR)
-#     )
-#     print(f'FFmpeg process connected at time {time.ctime()}')
-#     return process
-
-
 def livestream_executive(url):
     """
     Establishes a livestream connection to the provided URL, reads video frames,
@@ -147,8 +123,6 @@ def livestream_executive_ui(url, app):
     Returns:
         None
     """
-
-    # process = get_rtmp_frames(settings.RTMP_URL)
 
     print(f'Initiated FFmpeg process at time {time.ctime()}')
     # Set up FFmpeg process
