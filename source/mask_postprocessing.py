@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from PIL import Image
 import pydensecrf.densecrf as dcrf
-from pydensecrf.utils import unary_from_labels, create_pairwise_bilateral, create_pairwise_gaussian
+from pydensecrf.utils import unary_from_labels
 
 import model_inference
 import settings

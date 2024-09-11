@@ -11,7 +11,7 @@ import model_inference
 VERSION = '1.0.0'
 ENVIRONMENT = 'development'
 TRAIN = False
-SHOW_DEBUG_PROFILE = False
+SHOW_DEBUG_PROFILE = True
 UI_ON = True
 
 # RTMP/NGINX settings
@@ -56,7 +56,7 @@ BATCH_SIZE = 5
 NUM_CLASSES = 23
 
 # Stream properties
-INPUT_FPS = 30
+INPUT_FPS = 1 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
 OUTPUT_FPS = 0.4
 NUM_THREADS = 4
 PIPE_STDOUT = True
