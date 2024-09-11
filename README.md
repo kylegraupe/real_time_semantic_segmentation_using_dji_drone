@@ -2,6 +2,10 @@
 
 This application takes a video stream from a DJI drone via RTMP Server and performs image processing and semantic segmentation on the video stream.
 
+## Context 
+
+In various industries and applications, there is a growing need for real-time, high-quality video streaming capabilities. DJI is the market-dominant supplier in consumer and industry drones. Therefore, building an application for real-time Computer Vision, leveraging DJI drones like the Mini 4 Pro, is essential to harness the full potential of these advanced imaging systems. This application provides immediate AI analysis to both consumers and professionals, eliminating the need for more costly alternatives while offering comparable control over the video feed and frames.
+
 ## Features
 
 - **Real-Time Semantic Segmentation**: Perform live semantic segmentation on drone footage.
