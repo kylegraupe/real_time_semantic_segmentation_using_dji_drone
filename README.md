@@ -1,7 +1,14 @@
-# Real Time Image Processing and Semantic Segmentation on DJI Drone via RTMP Server
+# Real-Time Semantic Segmentation on DJI Drone via RTMP Server
 
-This application takes a video stream from a DJI drone via RTMP Server and performs
-image processing and semantic segmentation on the video stream.
+This application takes a video stream from a DJI drone via RTMP Server and performs image processing and semantic segmentation on the video stream.
+
+## Features
+
+- **Real-Time Semantic Segmentation**: Perform live semantic segmentation on drone footage.
+- **Custom Model Integration**: Integrate custom U-Net models for segmentation tasks.
+- **Post-Processing**: Apply advanced post-processing techniques to improve segmentation accuracy.
+- **GUI Integration**: A user-friendly graphical interface for controlling and visualizing the segmentation process.
+
 
 ## SETUP (MacOS Apple Silicon):
 - install NGINX with RTMP module: 'brew install nginx-full --with-rtmp'
