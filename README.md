@@ -6,6 +6,10 @@ This application takes a video stream from a DJI drone via RTMP Server and perfo
 
 In various industries and applications, there is a growing need for real-time, high-quality video streaming capabilities. DJI is the market-dominant supplier in consumer and industry drones. Therefore, building an application for real-time Computer Vision, leveraging DJI drones like the Mini 4 Pro, is essential to harness the full potential of these advanced imaging systems. This application provides immediate AI analysis to both consumers and professionals, eliminating the need for more costly alternatives and the necessity of DJI SDK while offering comparable control over the video feed and frames.
 
+## Application Trailer
+
+To watch a short clip of the application in use, click [here.](https://www.graupe.io/portfolio/real-time-computer-vision-streamed-via-dji-drone)
+
 ## Features
 
 - **Real-Time Semantic Segmentation**: Perform live semantic segmentation on drone footage.
@@ -48,4 +52,4 @@ In various industries and applications, there is a growing need for real-time, h
 ## REFERENCES
 - Model Training Conducted in Kaggle Jupyter Notebook Environment:
   - https://www.kaggle.com/code/kylegraupe/model-training-dji-real-time-semantic-segmentation
-  - Model also included in repository: 'model_training/model-training-dji-real-time-semantic-seg-v1.ipynb'
+  - Model training also included in repository: 'model_training/model-training-dji-real-time-semantic-seg-v1.ipynb'
