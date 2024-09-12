@@ -21,7 +21,7 @@ ip_address = '10.0.0.17'
 RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
-MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V1.pt'
+MODEL_PATH = '/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/trained_models/Unet-Mobilenet_V3.pt'
 MODEL, DEVICE = model_inference.load_segmentation_model(MODEL_PATH)
 MODEL_ENCODER_NAME = MODEL.encoder.__class__.__name__
 MODEL_DECODER_NAME = MODEL.decoder.__class__.__name__
@@ -56,7 +56,7 @@ BATCH_SIZE = 5
 NUM_CLASSES = 23
 
 # Stream properties
-INPUT_FPS = 1 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
+INPUT_FPS = 2 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
 OUTPUT_FPS = 0.4
 NUM_THREADS = 4
 MAX_BUFFER_SIZE = 5
