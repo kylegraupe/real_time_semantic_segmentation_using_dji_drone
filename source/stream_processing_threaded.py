@@ -73,7 +73,7 @@ def produce_livestream_buffer(url):
 def consume_livestream_buffer():
     time.sleep(2)
     while is_streaming:
-        frame_batch = get_first_n_items_from_queue(BUFFER_QUEUE, 5)
+        frame_batch = get_first_n_items_from_queue(BUFFER_QUEUE, 1)
         frame_batch_resized = []
 
         if settings.MODEL_ON:
