@@ -96,7 +96,7 @@ def livestream_executive_ui(url, app):
         # Retrieve the first (oldest) frame from the buffer
         buffer_frame = get_first_item_from_queue(buffer_queue)
 
-        print(f'Buffer queue size: {buffer_queue.qsize()}')
+        # print(f'Buffer queue size: {buffer_queue.qsize()}')
 
         if settings.MODEL_ON:
 

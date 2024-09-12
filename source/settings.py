@@ -56,7 +56,7 @@ BATCH_SIZE = 5
 NUM_CLASSES = 23
 
 # Stream properties
-INPUT_FPS = 30 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
+INPUT_FPS = 5 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
 OUTPUT_FPS = 0.4
 NUM_THREADS = 4
 MAX_BUFFER_SIZE = 5

@@ -100,14 +100,14 @@ def consume_livestream_buffer():
 
             if settings.SIDE_BY_SIDE:
                 batch_tuple = (frame_batch_resized, segmentation_result_batch)
-                print(f'Batch Tuple: {batch_tuple}')
-                print(f'Batch Tuple Size: {len(batch_tuple)}')
-                print(f'Frame Batch Size: {len(frame_batch_resized)}')
-                print(f'Segmentation Batch Size: {segmentation_result_batch.shape}')
+                # print(f'Batch Tuple: {batch_tuple}')
+                # print(f'Batch Tuple Size: {len(batch_tuple)}')
+                # print(f'Frame Batch Size: {len(frame_batch_resized)}')
+                # print(f'Segmentation Batch Size: {segmentation_result_batch.shape}')
 
                 DISPLAY_QUEUE.put(batch_tuple)
                 # DISPLAY_QUEUE.task_done()
-                print(f'Display queue size 098: {DISPLAY_QUEUE.qsize()}')
+                # print(f'Display queue size 098: {DISPLAY_QUEUE.qsize()}')
 
                 # output_frame = np.hstack((buffer_frame_resized, segmentation_results))
             else:
@@ -147,15 +147,15 @@ def display_video():
     while is_streaming:
         if not DISPLAY_QUEUE.empty():
             display_queue_size = DISPLAY_QUEUE.qsize()
-            print(f'Display queue size: {display_queue_size}')
+            # print(f'Display queue size: {display_queue_size}')
 
             og_img, mask = DISPLAY_QUEUE.get()
-            print(f'og_img_shape: {len(og_img)}')
-            print(f'mask_shape: {mask.shape}')
+            # print(f'og_img_shape: {len(og_img)}')
+            # print(f'mask_shape: {mask.shape}')
 
             np_og_img = np.array(og_img)
             np_mask = np.array(mask)
-            print(f'np_img_shape: {np_og_img.shape}')
+            # print(f'np_img_shape: {np_og_img.shape}')
             print(np_mask.shape)
             if mask is None:
                 break
@@ -172,8 +172,8 @@ def display_video():
                 og_img = np_og_img[i]
                 mask_img = masks[i]
 
-                print(f'og_img: {i}')
-                print(f'mask_img: {i}')
+                # print(f'og_img: {i}')
+                # print(f'mask_img: {i}')
 
                 # save_batch_as_png([og_img], [mask_img], index=i, save_directory='/Users/kylegraupe/Documents/Programming/GitHub/Computer Vision Dataset Generator/real_time_semantic_segmentation_using_dji_drone/sample_results')
 
@@ -182,6 +182,7 @@ def display_video():
 
                 # Display the combined image
                 cv2.imshow("Frame", combined_img)
+                # app.update_video_display(combined_img)
 
                 # Introduce a 2-second delay
                 # time.sleep(2)
@@ -192,11 +193,7 @@ def display_video():
             break
 
 
-
-
-
-if __name__ == "__main__":
-
+def threaded_livestream_processing_executive():
     producer_thread = threading.Thread(target=produce_livestream_buffer, args=(settings.RTMP_URL,))
     consumer_thread = threading.Thread(target=consume_livestream_buffer)
 
@@ -205,6 +202,10 @@ if __name__ == "__main__":
 
     display_video()
 
-    # producer_thread.join()
-    # consumer_thread.join()
-    # cv2.destroyAllWindows()
+    producer_thread.join()
+    consumer_thread.join()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    threaded_livestream_processing_executive()
