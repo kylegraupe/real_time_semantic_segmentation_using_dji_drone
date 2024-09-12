@@ -16,8 +16,8 @@ UI_ON = True
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935
-# ip_address = '10.0.0.17'
-ip_address = '172.20.10.2' # Hotspot
+ip_address = '10.0.0.17'
+# ip_address = '172.20.10.2' # Hotspot
 RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
@@ -59,12 +59,15 @@ NUM_CLASSES = 23
 INPUT_FPS = 1 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
 OUTPUT_FPS = 0.4
 NUM_THREADS = 4
+MAX_BUFFER_SIZE = 5
 PIPE_STDOUT = True
 PIPE_STDERR = True
 
 # Frame properties
 FRAME_WIDTH = 1280
 FRAME_HEIGHT = 720
+FRAME_SIZE = FRAME_WIDTH * FRAME_HEIGHT * NUM_CHANNELS
+
 RESIZE_FRAME_WIDTH = 1280
 RESIZE_FRAME_HEIGHT = 704 # U-Net architecture requires input dimensions to be divisible by 32.
 VIDEO_DISPLAY_WIDTH = 1280  # Width of the video display area

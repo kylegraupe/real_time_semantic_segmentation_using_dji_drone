@@ -431,28 +431,18 @@ class StreamApp:
                  bg=crf_bg, fg=self.fg_color).grid(row=13, column=0, sticky="w")
 
     def stop_stream(self):
-        # Stop the stream
-        """
-        Stop the stream.
-
-        This function stops the stream by closing the input pipe, terminating
-        the FFmpeg process, waiting for the process to exit, and joining the
-        stream thread. It also disables the "Stop Stream" button.
-
-        Returns
-        -------
-        None
-        """
-        return None
-        # if self.is_streaming:
-        #     self.is_streaming = False
-        #     if self.process:
-        #         self.process.stdin.close()  # Close the input pipe
-        #         self.process.terminate()    # Terminate the FFmpeg process
-        #         self.process.wait()         # Wait for the process to exit
-        #         self.process = None
-        #     self.stream_thread.join()     # Wait for the stream thread to exit
-        #     self.stop_button.config(state=tk.DISABLED)
+        if self.is_streaming:
+            self.is_streaming = False
+            if self.process:
+                # self.process.stdin.close()  # Close the input pipe
+                self.process.terminate()    # Terminate the FFmpeg process
+                self.process.wait()         # Wait for the process to exit
+                self.process = None
+            if self.stream_thread:
+                self.stream_thread.join()     # Wait for the stream thread to exit
+            self.stop_button.config(state=tk.DISABLED)
+            # self.start_stream().config(state=tk.NORMAL)
+            print("Stream stopped.")
 
     def update_video_display(self, output_frame):
         # Convert BGR to RGB (if you're using OpenCV)
