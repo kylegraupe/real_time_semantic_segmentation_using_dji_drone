@@ -67,7 +67,7 @@ def produce_livestream_buffer(url):
 
         in_frame = np.frombuffer(in_bytes, np.uint8).reshape([720, 1280, 3]).copy()
         add_to_buffer(in_frame, BUFFER_QUEUE)
-        print(f'Buffer queue size: {BUFFER_QUEUE.qsize()}')
+        # print(f'Buffer queue size: {BUFFER_QUEUE.qsize()}')
 
 
 def consume_livestream_buffer():
@@ -82,8 +82,8 @@ def consume_livestream_buffer():
                 frame_img = Image.fromarray(frame)
                 frame_batch_resized.append(frame_img)
 
-            profiler = cProfile.Profile()
-            profiler.enable()
+            # profiler = cProfile.Profile()
+            # profiler.enable()
 
             segmentation_result_batch = model_inference.images_to_tensor(
                 frame_batch_resized,
@@ -91,9 +91,9 @@ def consume_livestream_buffer():
                 settings.DEVICE
             ).astype(np.uint8)
 
-            profiler.disable()
-            stats = pstats.Stats(profiler).sort_stats('cumtime')
-            stats.print_stats()
+            # profiler.disable()
+            # stats = pstats.Stats(profiler).sort_stats('cumtime')
+            # stats.print_stats()
 
             # _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(buffer_frame_resized,
             #                                                                         segmentation_results_rgb)

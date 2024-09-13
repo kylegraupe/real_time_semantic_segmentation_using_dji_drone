@@ -9,6 +9,7 @@ import tkinter as tk
 import settings
 import stream_processing
 import user_interface
+import stream_processing_threaded
 
 def stop_stream_callback():
     # Logic to stop the FFmpeg process or any other cleanup
@@ -27,13 +28,17 @@ def main():
 
     if settings.UI_ON:
         root = tk.Tk()
+        # app = user_interface.StreamApp(root,
+        #                                lambda: stream_processing.livestream_executive_ui(settings.RTMP_URL, app),
+        #                                lambda: app.stop_stream())
         app = user_interface.StreamApp(root,
-                                       lambda: stream_processing.livestream_executive_ui(settings.RTMP_URL, app),
+                                       lambda: stream_processing_threaded.threaded_livestream_processing_executive(app),
                                        lambda: app.stop_stream())
         root.mainloop()
     else:
-        stream_processing.livestream_executive(settings.RTMP_URL)
+        # stream_processing.livestream_executive(settings.RTMP_URL)
 
+        None
 
 if __name__ == "__main__":
 
