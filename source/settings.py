@@ -16,8 +16,8 @@ UI_ON = True
 
 # RTMP/NGINX settings
 LISTENING_PORT=1935
-# ip_address = '10.0.0.17'
-ip_address = '172.20.10.2' # Hotspot
+ip_address = '10.0.0.17'
+# ip_address = '172.20.10.2' # Hotspot
 RTMP_URL=f'rtmp://{ip_address}:{LISTENING_PORT}/live/'
 
 # Model properties
@@ -56,8 +56,8 @@ BATCH_SIZE = 5
 NUM_CLASSES = 23
 
 # Stream properties
-INPUT_FPS = 5 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
-OUTPUT_FPS = 0.4
+INPUT_FPS = 10 # Keep low when model is on, high when model is off. Too high will cause ffmpeg buffer to fill up.
+OUTPUT_FPS = 2
 NUM_THREADS = 4
 MAX_BUFFER_SIZE = 5
 PIPE_STDOUT = True

@@ -103,8 +103,8 @@ def consume_livestream_buffer():
                 settings.DEVICE
             ).astype(np.uint8)
 
-            _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(frame_batch_resized,
-                                                                                    segmentation_result_batch)
+            # _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(frame_batch_resized,
+            #                                                                         segmentation_result_batch)
 
             if settings.SIDE_BY_SIDE:
                 batch_tuple = (frame_batch_resized, segmentation_result_batch)
