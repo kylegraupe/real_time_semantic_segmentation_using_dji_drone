@@ -14,7 +14,7 @@ In various industries and applications, there is a growing need for real-time, h
 
 ## What problem does this solve?
 
-This application enables the use of computer vision on a DJI drone that does **NOT** get access to the DJI SDK. To see a list of the supported SDKs and their associated DJI drones, click [here](https://developer.dji.com/).
+This application enables the use of computer vision on a DJI drone that does **NOT** get access to the DJI SDK. To see a list of the supported SDKs and their associated DJI drones, click [here](https://developer.dji.com/). The drone that I am using for the development of this application is the DJI Mini 4 Pro, the latest release of the <250g class of consumer drones, which is **NOT** supported in the DJI SDK.
 
 ## Features
 
