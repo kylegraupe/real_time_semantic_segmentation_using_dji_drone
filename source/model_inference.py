@@ -62,7 +62,7 @@ def load_segmentation_model(model_path):
 #
 #     return output_labels_np
 
-def images_to_tensor(images, trained_model, device):
+def batch_to_tensor(images, trained_model, device):
     """
     Converts a batch of input images to tensors and makes predictions using a trained model.
 

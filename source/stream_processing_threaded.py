@@ -85,7 +85,7 @@ def consume_livestream_buffer():
             # profiler = cProfile.Profile()
             # profiler.enable()
 
-            segmentation_result_batch = model_inference.images_to_tensor(
+            segmentation_result_batch = model_inference.batch_to_tensor(
                 frame_batch_resized,
                 settings.MODEL,
                 settings.DEVICE
@@ -95,8 +95,8 @@ def consume_livestream_buffer():
             # stats = pstats.Stats(profiler).sort_stats('cumtime')
             # stats.print_stats()
 
-            # _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(buffer_frame_resized,
-            #                                                                         segmentation_results_rgb)
+            _, segmentation_results = mask_postprocessing.apply_mask_postprocessing(frame_batch_resized,
+                                                                                    segmentation_result_batch)
 
             if settings.SIDE_BY_SIDE:
                 batch_tuple = (frame_batch_resized, segmentation_result_batch)

@@ -127,7 +127,7 @@ def apply_mask_postprocessing(raw, mask_rgb_np):
         mask = apply_median_filtering(mask)
 
     else:
-        segmented_frame_np_gray = model_inference.image_to_tensor(Image.fromarray(raw), settings.MODEL,
+        segmented_frame_np_gray = model_inference.batch_to_tensor(Image.fromarray(raw), settings.MODEL,
                                                                   settings.DEVICE).astype(np.uint8)
         segmented_frame_img_rgb = settings.COLOR_MAP[segmented_frame_np_gray]
         segmented_frame_np_rgb = np.array(segmented_frame_img_rgb)
