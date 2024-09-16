@@ -12,6 +12,10 @@ Stay tuned! Newest version solves latency issue and is in near real time! Traile
 
 In various industries and applications, there is a growing need for real-time, high-quality video streaming capabilities. DJI is the market-dominant supplier in consumer and industry drones. Therefore, building an application for real-time Computer Vision, leveraging DJI drones like the Mini 4 Pro, is essential to harness the full potential of these advanced imaging systems. This application provides immediate AI analysis to both consumers and professionals, eliminating the need for more costly alternatives and the necessity of DJI SDK while offering comparable control over the video feed and frames.
 
+## What problem does this solve?
+
+This application enables the use of computer vision on a DJI drone that does **NOT** get access to the DJI SDK. To see a list of the supported SDKs and their associated DJI drones, click [here](https://developer.dji.com/).
+
 ## Features
 
 - **Real-Time Semantic Segmentation**: Perform live semantic segmentation on drone footage.
