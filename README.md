@@ -21,7 +21,18 @@ This application enables the use of computer vision on a DJI drone that does **N
 - **Real-Time Semantic Segmentation**: Perform live semantic segmentation on drone footage.
 - **Custom Model Integration**: Integrate custom U-Net models for segmentation tasks.
 - **Post-Processing**: Apply advanced post-processing techniques to improve segmentation accuracy.
+  - **Conditional Random Field (CRF)**
+  - A probabilistic graphical model that refines pixel-level classification by considering spatial dependencies.
+  - **Dilation**
+  - Expands the boundaries of regions in a binary image, filling small holes and connecting adjacent regions.
+  - **Erosion**
+  - Shrinks the boundaries of regions in a binary image, removing small noise and detaching connected elements.
+  - **Median Smoothing**
+  - Reduces noise in an image by replacing each pixel with the median of neighboring pixel values.
+  - **Gaussian Blur**
+  - Applies a Gaussian function to blur an image, reducing high-frequency details and smoothing edges.
 - **GUI Integration**: A user-friendly graphical interface for controlling and visualizing the segmentation process.
+  - Python's TkInter is not suitable for high-frame displaying, therefore UI needs to be reworked in a new framework due to multithreading successes.
 
 
 ## SETUP (MacOS Apple Silicon):
