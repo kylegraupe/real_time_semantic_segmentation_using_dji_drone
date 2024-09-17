@@ -60,6 +60,9 @@ This application enables the use of computer vision on a DJI drone that does **N
     - Channel Mode: Auto
     - Resolution: 720p (only option)
     - Bit Rate: 5 Mbps
+- Endpoints:
+  - runs without UI: stream_processing_threaded.py
+  - runs deprecated veriion: main.py 
 
 ## REFERENCES
 - Model Training Conducted in Kaggle Jupyter Notebook Environment:
